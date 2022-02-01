@@ -4,7 +4,7 @@ ________________________________________________
 
 # Introduction
 This system is my final project of the Cyber/Softwar-Engineering major.
-In a world where there is a database of signatures of all citizens, there is a need to sign documents in government institutions and legal matters; to close deals.
+In a world where there is a database of signatures of all citizens, there is a need in signing documents in government institutions and legal matters; to close deals.
 In order to make counterfeiting more difficult, and also to enable signing papers from afar, I've created a system that identifies forgeries of signatures, verifies the authenticity of documents, and establishes a connection between the two sides of the deal.
 
 # How it Works
