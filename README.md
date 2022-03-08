@@ -12,7 +12,9 @@ The system runs a server, and its users are its clients, with whom it deals simu
 
 
 ###### links:
-versign package - https://github.com/saifkhichi96/versign-core
+[versign package](https://github.com/saifkhichi96/versign-core).
 --> need to check the example.py file to see what -1/1 mean (what the predictions return for genuine/ forged).
-sigver module - https://github.com/luizgh/sigver
-kaggle (datasets) - https://www.kaggle.com/divyanshrai/handwritten-signatures
+
+[sigver module](https://github.com/luizgh/sigver).
+
+[kaggle (datasets)](https://www.kaggle.com/divyanshrai/handwritten-signatures).
