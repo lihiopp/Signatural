@@ -28,10 +28,9 @@ def clearScreen():
     
 def saveSignature():
     '''Saves the signature as a png file.'''
-    #canvas.postscript(file="signature1.eps", colormode='color')
+    canvas.postscript(file="signature.eps", colormode='color')
     #img = Image.open("signature1" + '.eps')
     #img.save("signature1" + '.eps', 'eps')
-    
     root.destroy()
 
 
