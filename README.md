@@ -11,7 +11,7 @@ In order to make counterfeiting more difficult, and also to enable signing paper
 The system runs a server, and its users are its clients, with whom it deals simultaniously. It establishes a connection between 2 users (it is the third party). One uploads a document that needs to be signed, and the other gets it. Then, the other user enters his signature. The system runs tests and compares the signature to one in its database. In case it turns out to be forged, meaning the one signing is not the person the signature belongs to, the system warns about it and does not allow the deal to be continued. In case the signature is authentic, it attaches it to the document, adds a watermark, and sends is to the uploader.
 
 
-###### links:
+### links:
 [versign package](https://github.com/saifkhichi96/versign-core).
 
 [sigver module](https://github.com/luizgh/sigver).
@@ -25,7 +25,8 @@ The system runs a server, and its users are its clients, with whom it deals simu
 
 ###### current errors & future tasks:
 1. Need to check out example.py of versign and figure what -1 / 1 stand for.
-2. Decide whether to use a converter's API or install Ghostscript.
-3. Can't install versign & fitz at home because of problems with installing torch.
-4. Create GUI using c#
-5. Store & run server in microsoft cloud.
+2. Decide whether to use an eps converter's API or install Ghostscript.
+3. Install python 64bit version - and install torch package.
+4. Try to install versign & fitz at home.
+5. Create GUI using c#
+6. Store & run server in microsoft cloud.
