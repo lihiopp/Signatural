@@ -23,7 +23,7 @@ The system runs a server, and its users are its clients, with whom it deals simu
 [EPS converter API](https://www.api2convert.com/docs/getting_started/api_key.html)
 
 
-###### current errors & future tasks:
+#### current errors & future tasks:
 1. Need to check out example.py of versign and figure what -1 / 1 stand for.
 2. Decide whether to use an eps converter's API or install Ghostscript.
 3. Install python 64bit version - and install torch package.
