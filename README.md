@@ -25,8 +25,7 @@ The system runs a server, and its users are its clients, with whom it deals simu
 
 #### current errors & future tasks:
 1. Need to check out example.py of versign and figure what -1 / 1 stand for.
-2. Decide whether to use an eps converter's API or install Ghostscript.
-3. Install python 64bit version - and install torch package.
-4. Try to install versign & fitz at home.
-5. Create GUI using c#
-6. Store & run server in microsoft cloud.
+2. Install python 64bit version at home - and install torch package.
+3. Try to install versign & fitz at home.
+4. Create GUI using c#
+5. Store & run server in microsoft cloud.
