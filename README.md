@@ -22,6 +22,10 @@ The system runs a server, and its users are its clients, with whom it deals simu
 
 [EPS converter API](https://www.api2convert.com/docs/getting_started/api_key.html)
 
+[structural_similarity](structural_similarity)
+[SigNet](https://medium.com/swlh/signet-detecting-signature-similarity-using-machine-learning-deep-learning-is-this-the-end-of-1a6bdc76b04b)
+[Structural Similarity Index](https://ourcodeworld.com/articles/read/991/how-to-calculate-the-structural-similarity-index-ssim-between-two-images-with-python)
+
 
 #### current errors & future tasks:
 1. Need to check out example.py of versign and figure what -1 / 1 stand for.
