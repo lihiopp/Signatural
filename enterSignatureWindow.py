@@ -1,5 +1,6 @@
 import tkinter as tk
 from PIL import ImageGrab
+import win32gui
 
 def create_window():
     root = tk.Tk()
@@ -28,14 +29,14 @@ def clearScreen():
     
 def saveSignature():
     '''Saves the signature as a png file.'''
-    canvas.postscript(file="signature.eps", colormode='color')
-    #img = Image.open("signature1" + '.eps')
-    #img.save("signature1" + '.eps', 'eps')
+    HWND = canvas.winfo_id()  # get the handle of the canvas
+    coords = win32gui.GetWindowRect(HWND)  # get the coordinate of the canvas
+    im = ImageGrab.grab(coords).save('signature1.png')
+    print("Image coordinates: " + coords) #tuple of (left,upper,right,lower)
     root.destroy()
 
-
 def create_canvas(root):
-    '''Createa a canvas inside the window.'''
+    '''Creates a canvas inside the window.'''
     canvas = tk.Canvas(root,width=400, height=200, bg = "white", cursor="cross")
     canvas.pack()
     tk.Label(root, text="Draw your signature, enter 'Done!' when finished.").pack()
