@@ -12,15 +12,9 @@ The system runs a server, and its users are its clients, with whom it deals simu
 
 
 ### links:
-[versign package](https://github.com/saifkhichi96/versign-core).
-
-[sigver module](https://github.com/luizgh/sigver).
-
 [kaggle (datasets)](https://www.kaggle.com/divyanshrai/handwritten-signatures).
 
 [Add image to PDF file](https://stackabuse.com/working-with-pdfs-in-python-adding-images-and-watermarks/).
-
-[EPS converter API](https://www.api2convert.com/docs/getting_started/api_key.html)
 
 [structural_similarity](structural_similarity)
 [SigNet](https://medium.com/swlh/signet-detecting-signature-similarity-using-machine-learning-deep-learning-is-this-the-end-of-1a6bdc76b04b)
@@ -28,8 +22,8 @@ The system runs a server, and its users are its clients, with whom it deals simu
 
 
 #### current errors & future tasks:
-1. Need to check out example.py of versign and figure what -1 / 1 stand for.
-2. Install python 64bit version at home - and install torch package.
-3. Try to install versign & fitz at home.
+1. Try to install Python64, torch and fitz at home.
+2. Check out adding image to PDF.
+3. Create server & client.
 4. Create GUI using c#
 5. Store & run server in microsoft cloud.
