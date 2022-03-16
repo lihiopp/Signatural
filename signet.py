@@ -2,16 +2,14 @@ from skimage.metrics import structural_similarity
 import numpy as np
 from PIL import Image
 
-
 def mse(A, B):
     """
-        Computes Mean Squared Error between two images. (A and B)
-        
+        Computes Mean Squared Error between two images.
         Arguments:
-            A: numpy array
-            B: numpy array
+            A: numpy array of image 1.
+            B: numpy array of image 2.
         Returns:
-            err: float
+            err: float.
     """
     
     # sigma(1, n-1)(a-b)^2)
@@ -19,29 +17,29 @@ def mse(A, B):
     
     # mean of the sum (r,c) => total elements: r*c
     err /= float(A.shape[0] * B.shape[1])
-    
     return err
+
 
 def ssim(A, B):
     """
-        Computes SSIM between two images.
-        
+        Computes Structure Similarity between two images.
         Arguments:
-            A: numpy array
-            B: numpy array
-            
+            A: numpy array of image 1.
+            B: numpy array of image 2.
         Returns:
-            score: float
+            score: float.
     """
-    
     return structural_similarity(A.flatten(), B.flatten())
 
+
 def main():
+    # Open images as numpy arrays.
     real_img = Image.open('real1.png')
     realnp = np.asarray(real_img)
     test_img = Image.open('test1.png')
     testnp = np.asarray(test_img)
-
+    
+    # Make sure the images have the same size.
     testnp.resize(realnp.shape)
     
     print("mse:",mse(realnp,testnp))
