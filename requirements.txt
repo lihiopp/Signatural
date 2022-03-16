@@ -1,6 +1,2 @@
 Packages I have installed locally:
-cv2
-visdom-logger
-sigver-master
-versign
 fitz
