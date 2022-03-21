@@ -1,2 +1,3 @@
 Packages I have installed locally:
-fitz
+PyMuPDF
+scikit-image
