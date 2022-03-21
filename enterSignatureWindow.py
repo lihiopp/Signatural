@@ -32,7 +32,7 @@ def saveSignature():
     HWND = canvas.winfo_id()  # get the handle of the canvas
     coords = win32gui.GetWindowRect(HWND)  # get the coordinate of the canvas
     im = ImageGrab.grab(coords).save('signature1.png')
-    print("Image coordinates: " + coords) #tuple of (left,upper,right,lower)
+    print("Image coordinates: " + str(coords)) #tuple of (left,upper,right,lower)
     root.destroy()
 
 def create_canvas(root):
