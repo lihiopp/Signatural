@@ -1,15 +1,15 @@
-import socket, threading, re, random, os
-from urllib import response
+import socket, threading, re, os
 import pandas as pd
+import enterSignatureWindow as drawSig
 
 class Server:
     def __init__(self,ip,port):
-        # folders: users folders: their signature & files, the database csv file, email verification folder,  
+        # folders: users folders with: their signature & files, the database csv file, email verification folder  
         self.socket = socket.socket()
         self.socket.bind((ip,port))
         self.socket.listen(5)
         self.clients = {} # dictionary of connected users and their client sockets
-        #self.df = pd.read_csv(r"") # dataframe of: usernames, passwords, emails and signatures(path).
+        #self.df = pd.read_csv(r"") # dataframe of: usernames, passwords, emails and signatures(path), num of attempts, num of forgeries.
         print("Server initiallized.")
     
     def get_connection(self):
@@ -20,17 +20,16 @@ class Server:
 
     def handle_client(self,client,client_id):
         action = client.recv(1024).decode()
-        if(action=="Login"):
-            username = Server.login(self, client,client_id)
-        if(action=="Signup"):
-            Server.signup(self,client)
-
-        # is the user an uploader / signer
-        status = client.recv(1024).decode()
-        if(status=="uploader"):
-            Server.uploader(self, client, username)
-        if(status=="signer"):
-            Server.signer(self, client, username) ####
+        while(action!="Exit"):
+            if(action=="Login"):
+                username = Server.login(self, client,client_id)
+            if(action=="Signup"):
+                Server.signup(self,client)
+            if(action=="Send file"):
+                Server.uploader(self,client,username)
+            
+            action = client.recv(1024).decode()
+        client.close()
 
 
     def login(self, client,client_id):
@@ -44,7 +43,7 @@ class Server:
             client.send("Wrong username. Try again.".decode())
             password = client.recv(1024).decode()
             
-        # change id to username in clients dictionary
+        # changes id to username in clients dictionary
         self.clients[username] = self.clients[client_id]
         del self.clients[client_id]
 
@@ -65,10 +64,6 @@ class Server:
         os.mkdir(path)
         
         password = client.recv(1024).decode()
-        while(len(password) < 6 ):
-            client.send("100".encode()) # Password has less than 6 chars
-            password = client.recv(1024).decode()
-        client.send("200".encode()) # Password accepted
         
         email = client.recv(1024).decode()
         reg = "[a-z0-9]+@[a-z]+\.[a-z]{2,3}" # Email format
@@ -76,12 +71,13 @@ class Server:
             client.send("100".encode()) # Not in email format
             email = client.recv(1024).decode()
         client.send("200".encode()) # Email accepted
-        Server.email_verification()
+        Server.email_verification(email)
         # signature = # Get png file and name it after username!!!
-        # Enter details to database!!!
+        drawSig.main()
+        # Enter details to database, num of attempts and forgeries = 0!!!
 
 
-    def email_verification():
+    def email_verification(email):
         # check email verification python file
         pass
 
@@ -104,7 +100,7 @@ class Server:
                         if not data:
                             break
                         f.write(data)
-                print("Got file: " + filename + " !")
+                print("Got file: " + filename + "from: " + username + " !")
 
                 # the server sends the file to the signer.
                 self.clients[requested_signer].send(filename.encode())
@@ -114,7 +110,7 @@ class Server:
                         if not data:
                             break
                         self.clients[requested_signer].send(data.encode())
-                print("Sent file: " + filename + " to signer user!")
+                print("Sent file: " + filename + " to: " + requested_signer +"!")
             else:
                 client.send("request denied".encode())
                 
