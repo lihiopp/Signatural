@@ -16,10 +16,11 @@ The system runs a server, and its users are its clients, with whom it deals simu
 [structural_similarity](structural_similarity)
 [SigNet](https://medium.com/swlh/signet-detecting-signature-similarity-using-machine-learning-deep-learning-is-this-the-end-of-1a6bdc76b04b)
 [Structural Similarity Index](https://ourcodeworld.com/articles/read/991/how-to-calculate-the-structural-similarity-index-ssim-between-two-images-with-python)
-
+[C# client](https://www.c-sharpcorner.com/article/socket-programming-in-C-Sharp/)
 
 #### current errors & future tasks:
-1. Try to install Python64, torch and fitz at home.
-3. Create server & client.
-4. Create GUI using c#
-5. Store & run server in microsoft cloud.
+1. Try to install Python64, torch at home.
+3. Create client.
+4. Connect GUI to Client
+5. handle the receive and send symultaniously with threads in client & add status variable.
+6. Store & run server in microsoft cloud ???
