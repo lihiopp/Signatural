@@ -24,8 +24,9 @@ The system runs a server, and its users are its clients, with whom it deals simu
 3. Connect GUI to Client
 4. Add thread to client + status variable.
 5. Check MD5 hashing in c#
-6. check drawSig and email verification!!!!
-7. check whether os.mkdir() changes the current working directory.
-8. Check about installer
-9. Check the folders that the code opens and deals with, see if it's working
-10. Store & run server in microsoft cloud ??? (or just use external IP of server?)
+6. Add close socket when X is pressed function in client
+7. check drawSig and email verification!!!!
+8. check whether os.mkdir() changes the current working directory.
+9. Check about installer
+10. Check the folders that the code opens and deals with, see if it's working
+11. Store & run server in microsoft cloud ??? (or just use external IP of server?)
