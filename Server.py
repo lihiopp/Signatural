@@ -1,7 +1,7 @@
 import socket, threading, re, os
 import pandas as pd
-import enterSignatureWindow as drawSig
-import email_verification as verify
+#import enterSignatureWindow as drawSig
+#import email_verification as verify
 
 class Server:
     def __init__(self,ip,port):
@@ -16,26 +16,28 @@ class Server:
     def get_connection(self):
         # Accepts connection of a client
         client, addr = self.socket.accept()
+        print("got connection from: " + str(addr))
         client_id = len(self.clients)
 
         # Creates a thread for each client and adds
         # them to the clients dictionary.
         t = threading.Thread(target=Server.handle_client ,
-                             args=(self,client,client_id,))
+                             args=(self,client,client_id,)).start()
         self.clients.update({client_id:client})
 
     def handle_client(self,client,client_id):
         # Handles the clients actions in the server
         try:
-            while(True):
-                action = client.recv(1024).decode()
+            action = client.recv(1024).decode()
+            while(action!="Exit"):
                 if(action=="Login"):
                     username = Server.login(self, client,client_id)
                 if(action=="Signup"):
                     Server.signup(self,client)
                 if(action=="Send file"):
                     Server.uploader(self,client,username)
-                    
+
+                action = client.recv(1024).decode()
         except RuntimeError:
             # Connection was cut off, closes the socket
             # and deletes it from the clients dictionary
@@ -55,58 +57,66 @@ class Server:
         password = client.recv(1024).decode()
 
         # while username doesn't exists
-        while(username not in self.df['username']): ######
+        if(username not in self.df['username']): ######
             client.send("Username doesn't exists. Try again.".decode())
-            username = client.recv(1024).decode()
-            password = client.recv(1024).decode()
+            return
 
-        # while username and password don't match
-        tmp = self.df.loc[['username'], ['password']] # get username and password columns from self.df
-        while(password not in tmp['password']):
+        else:
+            # Get password of user from the dataframe
+            user_row_index = self.dataFrame.index[self.dataFrame["username"]==username]
+            user_password = self.dataFrame.iloc[user_row_index]["password"]
+
+        # If given password is not the one in the df
+        if(password != user_password):
             client.send("Wrong username or password. Try again.".decode())
-            username = client.recv(1024).decode()
-            password = client.recv(1024).decode()
-            
-        # changes client_id to its username in clients dictionary
-        self.clients[username] = self.clients[client_id]
-        del self.clients[client_id]
 
-        client.send("Logged in".encode())
-        print(str(username) + " has logged in.")
-        return username
+        else:
+            # changes client_id key to the client's username in clients dictionary
+            self.clients[username] = self.clients[client_id]
+            del self.clients[client_id]
+
+            client.send("Logged in".encode())
+            print(str(username) + " has logged in.")
+            return username
 
 
     def signup(self, client):
-        # Gets username from client
-        username = client.recv(1024).decode()
-
-        # While the username already exists: 100=invalid, 200=valid.
-        while(username in self.df['username']):
-            client.send("100".encode())
-            username = client.recv(1024).decode()
-        client.send("200".encode())
+        reg = "[a-z0-9]+@[a-z]+\.[a-z]{2,3}" # Email format
         
-        # Creates a folder for the new user with their signature and files.
-        path = "\\users\\ " + username
-        os.mkdir(path)
-
-        # Gets the password and the email
+        # Gets user details from client
+        username = client.recv(1024).decode()
         password = client.recv(1024).decode()
         email = client.recv(1024).decode()
         
-        reg = "[a-z0-9]+@[a-z]+\.[a-z]{2,3}" # Email format
-        while(re.search(reg, email) == None):
-            client.send("100".encode()) # Not in email format
-            email = client.recv(1024).decode()
-        client.send("200".encode()) # Email accepted
+        # If the username already exists
+        if(username in self.df['username']):
+            client.send("Invalid1".encode())
+            return
 
-        # Verifys the email abd activates the account
-        Server.email_verification(email)
+        # If the email is not in email format
+        if(re.search(reg, email) == None):
+            client.send("Invalid2".encode())
         
-        # Saves png file of the client's signature, names it after username
-        drawSig.main(username)
+        else:
+            client.send("Valid".encode())
+
+            # Verifys the user's email
+            Server.email_verification(email)
+            
+            # Creates a folder for the new user with their signature and files.
+            path = "\\users\\ " + username
+            os.mkdir(path)
         
-        # Enters details to database, num of attempts and forgeries = 0!!!
+            # Saves the client's signature, names it after username
+            drawSig.main(username)
+        
+            # Enters details to database
+            df = pd.DataFrame([username, password, email, 0, 0],
+                              columns=['username', 'password','email',
+                                       'attempts','forgeries'])
+            self.df = pd.concat([self.df, df])
+            self.df.to_csv('C:\\Users\\idd\\Desktop\\Michals\\cyber\\Signatural\\project\\users_data.csv', index=False)
+            # check if needs to press ok when asked about replace existing file
 
     def email_verification(email):
         # check email verification python file
@@ -150,6 +160,8 @@ class Server:
         
     
 def main():
-    server = Server("127.0.0.1",12345)
+    while True:
+        server = Server("127.0.0.1",32619)
+        server.get_connection()
     
 main()
