@@ -12,15 +12,20 @@ The system runs a server, and its users are its clients, with whom it deals simu
 
 
 ### links:
-[kaggle (datasets)](https://www.kaggle.com/divyanshrai/handwritten-signatures).
 [structural_similarity](structural_similarity)
 [SigNet](https://medium.com/swlh/signet-detecting-signature-similarity-using-machine-learning-deep-learning-is-this-the-end-of-1a6bdc76b04b)
 [Structural Similarity Index](https://ourcodeworld.com/articles/read/991/how-to-calculate-the-structural-similarity-index-ssim-between-two-images-with-python)
 [C# client](https://www.c-sharpcorner.com/article/socket-programming-in-C-Sharp/)
+[backgroundWorker in c#](https://www.c-sharpcorner.com/uploadfile/mahesh/backgroundworker-in-C-Sharp/)
 
-#### current errors & future tasks:
-1. Try to install Python64, torch at home.
-3. Create client.
-4. Connect GUI to Client
-5. handle the receive and send symultaniously with threads in client & add status variable.
-6. Store & run server in microsoft cloud ???
+#### future tasks:
+1. Fix multipule connections to one port problem.
+1. Check client and server and see exceptions of modules... if needed: try to install Python64, torch at home.
+3. Connect GUI to Client
+4. Add thread to client + status variable.
+5. Check MD5 hashing in c#
+6. check drawSig and email verification!!!!
+7. check whether os.mkdir() changes the current working directory.
+8. Check about installer
+9. Check the folders that the code opens and deals with, see if it's working
+10. Store & run server in microsoft cloud ??? (or just use external IP of server?)
