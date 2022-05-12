@@ -10,7 +10,7 @@ class Server:
         self.socket.bind((ip,port))
         self.socket.listen(5)
         self.clients = {} # dictionary of connected users and their client sockets
-        self.df = pd.read_csv(r"C:\Users\student\Desktop\michal\Signatural-main\users_data.csv")
+        self.df = pd.read_csv(r"C:\Users\idd\Desktop\Michals\cyber\Signatural\Demo\users_data.csv")
         # dataframe of: usernames, passwords, emails and signatures(path), num of attempts, num of forgeries.
         print("Server initiallized.")
     
@@ -42,10 +42,6 @@ class Server:
                         code = Server.signup(self,client)
                 if(action=="Send file"):
                     Server.uploader(self,client,username)
-                if(action=="Logout"):
-                    new_id = len(self.clients)
-                    self.clients[new_id] = self.clients[username]
-                    del self.clients[username]
                 #if(action=="ForgotPass"):
                     #Server.ForgotPassword()
 
@@ -73,7 +69,7 @@ class Server:
         details = details[1:-1].split(',')
         username = details[0]
         password = details[1]
-        
+
         # if username doesn't exists
         usernames_list = self.df['username'].tolist()
         if(username not in usernames_list):
@@ -84,15 +80,17 @@ class Server:
             user_row_index = self.df.index[self.df["username"]==username] # Find row of user
             tmp = self.df.iloc[user_row_index] # Create data frame with this row only
             user_password = tmp["password"][tmp.index[0]] # Get the value of the cell in the password columns
-            
+            email = tmp["email"][tmp.index[0]]
+            print(email)
         # If given password is not the one in the df
         if(password != str(user_password)):
             client.send("Invalid password.".encode())
             return -1
+        
         else:
             # changes client_id key to the client's username in clients dictionary
             client.send("Logged in".encode())
-
+            client.send(email.encode())
             self.clients[username] = self.clients[client_id]
             del self.clients[client_id]
             print(str(username) + " has logged in.")
@@ -124,7 +122,7 @@ class Server:
             #Server.email_verification(email)
             
             # Creates a folder for the new user with their signature and files.
-            path = "\\users\\" + username
+            path = "C:\\Users\\idd\\Desktop\\Michals\\cyber\\Signatural\\Demo\\users\\" + username
             os.mkdir(path)
         
             # Gets and Saves the client's signature, names it after username
@@ -132,7 +130,7 @@ class Server:
             # Enters details to database
             self.df.loc[len(self.df)] = [username,password,email,0,0]
             self.df.index += 1
-            self.df.to_csv('users_data.csv', index=False)
+            self.df.to_csv(r"C:\Users\idd\Desktop\Michals\cyber\Signatural\Demo\users_data.csv", index=False)
             return "Success"
 
 
@@ -151,7 +149,7 @@ class Server:
             # If signer accepts, the server gets the PDF file from the sender.
             if(response == "Yes"):
                 client.send("request accepted".encode())
-                path = r"\\users\\" + username + "\\"
+                path = r"Demo\\users\\" + username + "\\"
                 filename = Server.getFile(client,path)
                 print("Got file: " + filename + "from: " + username + " !")
 
