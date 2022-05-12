@@ -10,7 +10,7 @@ class Server:
         self.socket.bind((ip,port))
         self.socket.listen(5)
         self.clients = {} # dictionary of connected users and their client sockets
-        self.df = pd.read_csv(r"C:\Users\idd\Desktop\Michals\cyber\Signatural\Demo_project\users_data.csv")
+        self.df = pd.read_csv(r"C:\Users\student\Desktop\michal\Signatural-main\users_data.csv")
         # dataframe of: usernames, passwords, emails and signatures(path), num of attempts, num of forgeries.
         print("Server initiallized.")
     
@@ -30,6 +30,7 @@ class Server:
         # Handles the clients actions in the server
         try:
             action = client.recv(1024).decode()
+            action = action[1:-1]
             while(action!="Exit"):
                 if(action=="Login"):
                     username = Server.login(self, client,client_id)
@@ -45,27 +46,33 @@ class Server:
                     new_id = len(self.clients)
                     self.clients[new_id] = self.clients[username]
                     del self.clients[username]
+                #if(action=="ForgotPass"):
+                    #Server.ForgotPassword()
 
                 action = client.recv(1024).decode()
-        except ConnectionResetError:
+                action = action[1:-1]
+        except:
             # Connection was cut off, closes the socket
             # and deletes it from the clients dictionary
             try:
                 client.close()
                 del self.clients[username]
-            except UnboundLocalError:
+            except:
                 # client hasn't logged in yet and still has
                 # an id instead of a username as the dictionary key.
                 del self.clients[client_id]
-            except KeyError:
-                del self.clients[client_id]
                 
+    #def ForgotPassword(self,client):
+     #   email = client.recv(1024).decode()
+      #  if(email in list(self.df['email'])):
 
 
     def login(self, client,client_id):
         # Get username and passord from client
-        username = client.recv(1024).decode()
-        password = client.recv(1024).decode()
+        details = client.recv(1024).decode()
+        details = details[1:-1].split(',')
+        username = details[0]
+        password = details[1]
         
         # if username doesn't exists
         usernames_list = self.df['username'].tolist()
@@ -117,7 +124,7 @@ class Server:
             #Server.email_verification(email)
             
             # Creates a folder for the new user with their signature and files.
-            path = "C:\\Users\\idd\\Desktop\\Michals\\cyber\\Signatural\\Demo_project\\users\\" + username
+            path = "\\users\\" + username
             os.mkdir(path)
         
             # Gets and Saves the client's signature, names it after username
@@ -125,8 +132,7 @@ class Server:
             # Enters details to database
             self.df.loc[len(self.df)] = [username,password,email,0,0]
             self.df.index += 1
-            print(self.df)
-            self.df.to_csv('C:\\Users\\idd\\Desktop\\Michals\\cyber\\Signatural\\Demo_project\\users_data.csv', index=False)
+            self.df.to_csv('users_data.csv', index=False)
             return "Success"
 
 
@@ -145,7 +151,7 @@ class Server:
             # If signer accepts, the server gets the PDF file from the sender.
             if(response == "Yes"):
                 client.send("request accepted".encode())
-                path = r"C:\\Users\\idd\\Desktop\\Michals\\signatural\\users\\" + username + "\\"
+                path = r"\\users\\" + username + "\\"
                 filename = Server.getFile(client,path)
                 print("Got file: " + filename + "from: " + username + " !")
 
@@ -188,7 +194,7 @@ class Server:
                 getter.send(data.encode())
                 
 def main():
-    server = Server("",54876)
+    server = Server("",55876)
     while True:
         server.get_connection()
     server.close()
