@@ -10,7 +10,8 @@ class Server:
         self.socket.bind((ip,port))
         self.socket.listen(5)
         self.clients = {} # dictionary of connected users and their client sockets
-        #self.df = pd.read_csv(r"") # dataframe of: usernames, passwords, emails and signatures(path), num of attempts, num of forgeries.
+        self.df = pd.read_csv(r"C:\Users\idd\Desktop\Michals\cyber\Signatural\Demo_project\users_data.csv")
+        # dataframe of: usernames, passwords, emails and signatures(path), num of attempts, num of forgeries.
         print("Server initiallized.")
     
     def get_connection(self):
@@ -32,21 +33,31 @@ class Server:
             while(action!="Exit"):
                 if(action=="Login"):
                     username = Server.login(self, client,client_id)
+                    while(username == -1):
+                        username = Server.login(self, client,client_id)
                 if(action=="Signup"):
-                    Server.signup(self,client)
+                    code = Server.signup(self,client)
+                    while(code=="Failed"):
+                        code = Server.signup(self,client)
                 if(action=="Send file"):
                     Server.uploader(self,client,username)
+                if(action=="Logout"):
+                    new_id = len(self.clients)
+                    self.clients[new_id] = self.clients[username]
+                    del self.clients[username]
 
                 action = client.recv(1024).decode()
-        except RuntimeError:
+        except ConnectionResetError:
             # Connection was cut off, closes the socket
             # and deletes it from the clients dictionary
             try:
                 client.close()
                 del self.clients[username]
-            except KeyError:
+            except UnboundLocalError:
                 # client hasn't logged in yet and still has
                 # an id instead of a username as the dictionary key.
+                del self.clients[client_id]
+            except KeyError:
                 del self.clients[client_id]
                 
 
@@ -55,68 +66,69 @@ class Server:
         # Get username and passord from client
         username = client.recv(1024).decode()
         password = client.recv(1024).decode()
-
-        # while username doesn't exists
-        if(username not in self.df['username']): ######
-            client.send("Username doesn't exists. Try again.".decode())
-            return
-
+        
+        # if username doesn't exists
+        usernames_list = self.df['username'].tolist()
+        if(username not in usernames_list):
+            client.send("Invalid username.".encode())
+            return -1
         else:
             # Get password of user from the dataframe
-            user_row_index = self.dataFrame.index[self.dataFrame["username"]==username]
-            user_password = self.dataFrame.iloc[user_row_index]["password"]
-
+            user_row_index = self.df.index[self.df["username"]==username] # Find row of user
+            tmp = self.df.iloc[user_row_index] # Create data frame with this row only
+            user_password = tmp["password"][tmp.index[0]] # Get the value of the cell in the password columns
+            
         # If given password is not the one in the df
-        if(password != user_password):
-            client.send("Wrong username or password. Try again.".decode())
-
+        if(password != str(user_password)):
+            client.send("Invalid password.".encode())
+            return -1
         else:
             # changes client_id key to the client's username in clients dictionary
+            client.send("Logged in".encode())
+
             self.clients[username] = self.clients[client_id]
             del self.clients[client_id]
-
-            client.send("Logged in".encode())
             print(str(username) + " has logged in.")
             return username
 
 
     def signup(self, client):
         reg = "[a-z0-9]+@[a-z]+\.[a-z]{2,3}" # Email format
-        
+        print(-1)
         # Gets user details from client
-        username = client.recv(1024).decode()
-        password = client.recv(1024).decode()
-        email = client.recv(1024).decode()
+        details = client.recv(1024).decode()
+        details = details[1:-1].split(',')
+        username = details[0]
+        password = details[1]
+        email = details[2]
         
         # If the username already exists
-        if(username in self.df['username']):
-            client.send("Invalid1".encode())
-            return
+        if(username in list(self.df['username'])):
+            client.send("Username already exists.".encode())
+            return "Failed"
 
         # If the email is not in email format
-        if(re.search(reg, email) == None):
-            client.send("Invalid2".encode())
-        
+        elif(re.search(reg, email) == None):
+            client.send("Got not email format.".encode())
+            return "Failed"
         else:
             client.send("Valid".encode())
-
             # Verifys the user's email
-            Server.email_verification(email)
+            #Server.email_verification(email)
             
             # Creates a folder for the new user with their signature and files.
-            path = "\\users\\ " + username
+            path = "C:\\Users\\idd\\Desktop\\Michals\\cyber\\Signatural\\Demo_project\\users\\" + username
             os.mkdir(path)
         
-            # Saves the client's signature, names it after username
-            drawSig.main(username)
+            # Gets and Saves the client's signature, names it after username
         
             # Enters details to database
-            df = pd.DataFrame([username, password, email, 0, 0],
-                              columns=['username', 'password','email',
-                                       'attempts','forgeries'])
-            self.df = pd.concat([self.df, df])
-            self.df.to_csv('C:\\Users\\idd\\Desktop\\Michals\\cyber\\Signatural\\project\\users_data.csv', index=False)
-            # check if needs to press ok when asked about replace existing file
+            self.df.loc[len(self.df)] = [username,password,email,0,0]
+            self.df.index += 1
+            print(self.df)
+            self.df.to_csv('C:\\Users\\idd\\Desktop\\Michals\\cyber\\Signatural\\Demo_project\\users_data.csv', index=False)
+            return "Success"
+
 
     def email_verification(email):
         # check email verification python file
@@ -133,35 +145,52 @@ class Server:
             # If signer accepts, the server gets the PDF file from the sender.
             if(response == "Yes"):
                 client.send("request accepted".encode())
-                filename = client.recv(1024).decode()
-                path = r"C:\\Users\\idd\\Desktop\\Michals\\signatural\\users\\" + username + "\\" + filename
-                with open(path,'wb') as f:
-                    while True:
-                        data = self.client_soc.recv(1024)
-                        if not data:
-                            break
-                        f.write(data)
+                path = r"C:\\Users\\idd\\Desktop\\Michals\\signatural\\users\\" + username + "\\"
+                filename = Server.getFile(client,path)
                 print("Got file: " + filename + "from: " + username + " !")
 
                 # The server sends the file to the signer.
-                self.clients[requested_signer].send(filename.encode())
-                with open (path, 'rb') as f:
-                    while True:
-                        data=f.read(1024)
-                        if not data:
-                            break
-                        self.clients[requested_signer].send(data.encode())
+                Server.sendFile(self.clients[requested_signer],filename,path)
                 print("Sent file: " + filename + " to: " + requested_signer +"!")
+
+                # Gets notified if the signature was real or forged
+                authenticity = client.recv(1024).decode()
+                if(authenticity=="real"):
+                    # Gets signed file from signer and sends it to the sender
+                    signatureName = Server.getFile(self.clients[requested_signer],path)
+                    Server.sendFile(client,signatureName,path)
+                
             else:
                 client.send("request denied".encode())
                 
         else:
             client.send("User not connected.".encode())
-        
-    
+
+    def getFile(sender,path):
+        filename = sender.recv(1024).decode()
+        path = path + filename
+        with open(path,'wb') as f:
+            while True:
+                data = client.recv(1024)
+                if not data:
+                    break
+                f.write(data)
+        return filename
+
+    def sendFile(getter,filename,path):
+        getter.send(filename.encode())
+        path = path + filename
+        with open (path, 'rb') as f:
+            while True:
+                data=f.read(1024)
+                if not data:
+                    break
+                getter.send(data.encode())
+                
 def main():
+    server = Server("",54876)
     while True:
-        server = Server("127.0.0.1",32619)
         server.get_connection()
+    server.close()
     
 main()
