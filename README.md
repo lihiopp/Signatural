@@ -19,14 +19,9 @@ The system runs a server, and its users are its clients, with whom it deals simu
 [backgroundWorker in c#](https://www.c-sharpcorner.com/uploadfile/mahesh/backgroundworker-in-C-Sharp/)
 
 #### future tasks:
-1. Fix multipule connections to one port problem.
-1. Check client and server and see exceptions of modules... if needed: try to install Python64, torch at home.
-3. Connect GUI to Client
-4. Add thread to client + status variable.
-5. Check MD5 hashing in c#
-6. Add close socket when X is pressed function in client
-7. check drawSig and email verification!!!!
-8. check whether os.mkdir() changes the current working directory.
-9. Check about installer
-10. Check the folders that the code opens and deals with, see if it's working
-11. Store & run server in microsoft cloud ??? (or just use external IP of server?)
+1. try to install Python64, torch at home.
+2. finish connecting GUI to Client
+3. Add thread to client / button
+4. check drawSig
+5. Check the folders that the code opens and deals with, see if it's working
+6. Store & run server in microsoft cloud ??? (or just use external IP of server and allow the firewall?)
