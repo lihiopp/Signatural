@@ -83,10 +83,12 @@ namespace GUI
         /// <param name="filepath"></param>
         public void SendFile(string filepath)
         {
-            // sends the filepath
-            s.Send(Encoding.ASCII.GetBytes(filepath));
+            // sends the filename
+            string[] tmp = filepath.Split('\\');
+            Console.WriteLine(tmp[tmp.Length - 1]); //
+            s.Send(Encoding.ASCII.GetBytes(tmp[tmp.Length-1]));
 
-            // Opens a specific file in read mode.
+            // Opens the specific file in read mode.
             using (FileStream file = new FileStream(filepath, FileMode.Open, FileAccess.Read))
             {
                 // Reads 1024 bytes, stores them in b and sends it each time,

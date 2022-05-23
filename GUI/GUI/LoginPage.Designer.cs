@@ -37,6 +37,9 @@ namespace GUI
             this.boxPasswordLogin = new System.Windows.Forms.TextBox();
             this.linkForgotPassword = new System.Windows.Forms.LinkLabel();
             this.btnDoneLogin = new System.Windows.Forms.Button();
+            this.lblVerifyCode = new System.Windows.Forms.Label();
+            this.boxVerifyCode = new System.Windows.Forms.TextBox();
+            this.btnSendVerifyMail = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -65,7 +68,7 @@ namespace GUI
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Century Gothic", 11F);
-            this.label2.Location = new System.Drawing.Point(269, 287);
+            this.label2.Location = new System.Drawing.Point(146, 287);
             this.label2.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(127, 25);
@@ -76,7 +79,7 @@ namespace GUI
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Century Gothic", 11F);
-            this.label3.Location = new System.Drawing.Point(612, 287);
+            this.label3.Location = new System.Drawing.Point(436, 287);
             this.label3.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(120, 25);
@@ -85,15 +88,16 @@ namespace GUI
             // 
             // boxUsernameLogin
             // 
-            this.boxUsernameLogin.Location = new System.Drawing.Point(411, 280);
+            this.boxUsernameLogin.Location = new System.Drawing.Point(271, 280);
             this.boxUsernameLogin.Name = "boxUsernameLogin";
             this.boxUsernameLogin.Size = new System.Drawing.Size(155, 37);
             this.boxUsernameLogin.TabIndex = 9;
             // 
             // boxPasswordLogin
             // 
-            this.boxPasswordLogin.Location = new System.Drawing.Point(742, 281);
+            this.boxPasswordLogin.Location = new System.Drawing.Point(554, 281);
             this.boxPasswordLogin.Name = "boxPasswordLogin";
+            this.boxPasswordLogin.PasswordChar = '*';
             this.boxPasswordLogin.Size = new System.Drawing.Size(155, 37);
             this.boxPasswordLogin.TabIndex = 10;
             // 
@@ -123,10 +127,45 @@ namespace GUI
             this.btnDoneLogin.UseVisualStyleBackColor = false;
             this.btnDoneLogin.Click += new System.EventHandler(this.btnDoneLogin_Click);
             // 
+            // lblVerifyCode
+            // 
+            this.lblVerifyCode.AutoSize = true;
+            this.lblVerifyCode.Font = new System.Drawing.Font("Century Gothic", 11F);
+            this.lblVerifyCode.Location = new System.Drawing.Point(715, 285);
+            this.lblVerifyCode.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.lblVerifyCode.Name = "lblVerifyCode";
+            this.lblVerifyCode.Size = new System.Drawing.Size(147, 25);
+            this.lblVerifyCode.TabIndex = 13;
+            this.lblVerifyCode.Text = "Verify Code:";
+            // 
+            // boxVerifyCode
+            // 
+            this.boxVerifyCode.Location = new System.Drawing.Point(850, 281);
+            this.boxVerifyCode.Name = "boxVerifyCode";
+            this.boxVerifyCode.Size = new System.Drawing.Size(155, 37);
+            this.boxVerifyCode.TabIndex = 14;
+            // 
+            // btnSendVerifyMail
+            // 
+            this.btnSendVerifyMail.BackColor = System.Drawing.Color.DodgerBlue;
+            this.btnSendVerifyMail.FlatAppearance.BorderColor = System.Drawing.Color.DodgerBlue;
+            this.btnSendVerifyMail.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSendVerifyMail.ForeColor = System.Drawing.Color.White;
+            this.btnSendVerifyMail.Location = new System.Drawing.Point(474, 395);
+            this.btnSendVerifyMail.Name = "btnSendVerifyMail";
+            this.btnSendVerifyMail.Size = new System.Drawing.Size(166, 43);
+            this.btnSendVerifyMail.TabIndex = 15;
+            this.btnSendVerifyMail.Text = "OK";
+            this.btnSendVerifyMail.UseVisualStyleBackColor = false;
+            this.btnSendVerifyMail.Click += new System.EventHandler(this.btnSendVerifyMail_Click);
+            // 
             // LoginPage
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(244)))), ((int)(((byte)(248)))), ((int)(((byte)(249)))));
+            this.Controls.Add(this.btnSendVerifyMail);
+            this.Controls.Add(this.boxVerifyCode);
+            this.Controls.Add(this.lblVerifyCode);
             this.Controls.Add(this.btnDoneLogin);
             this.Controls.Add(this.linkForgotPassword);
             this.Controls.Add(this.boxPasswordLogin);
@@ -154,5 +193,8 @@ namespace GUI
         private System.Windows.Forms.TextBox boxPasswordLogin;
         private System.Windows.Forms.LinkLabel linkForgotPassword;
         private System.Windows.Forms.Button btnDoneLogin;
+        private System.Windows.Forms.Label lblVerifyCode;
+        private System.Windows.Forms.TextBox boxVerifyCode;
+        private System.Windows.Forms.Button btnSendVerifyMail;
     }
 }

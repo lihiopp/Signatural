@@ -29,9 +29,13 @@ namespace GUI
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UserProfilePage));
             this.lblHelloUser = new System.Windows.Forms.Label();
             this.logint2 = new System.Windows.Forms.Label();
             this.btnSendFile = new System.Windows.Forms.Button();
+            this.btnSignFile = new System.Windows.Forms.Button();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // lblHelloUser
@@ -70,10 +74,36 @@ namespace GUI
             this.btnSendFile.UseVisualStyleBackColor = false;
             this.btnSendFile.Click += new System.EventHandler(this.btnSendFile_Click);
             // 
+            // btnSignFile
+            // 
+            this.btnSignFile.BackColor = System.Drawing.Color.DodgerBlue;
+            this.btnSignFile.FlatAppearance.BorderColor = System.Drawing.Color.DodgerBlue;
+            this.btnSignFile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSignFile.ForeColor = System.Drawing.Color.White;
+            this.btnSignFile.Location = new System.Drawing.Point(792, 191);
+            this.btnSignFile.Name = "btnSignFile";
+            this.btnSignFile.Size = new System.Drawing.Size(143, 43);
+            this.btnSignFile.TabIndex = 15;
+            this.btnSignFile.Text = "Sign file";
+            this.btnSignFile.UseVisualStyleBackColor = false;
+            this.btnSignFile.Click += new System.EventHandler(this.btnSignFile_Click);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(219, 257);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(320, 245);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 16;
+            this.pictureBox1.TabStop = false;
+            // 
             // UserProfilePage
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(244)))), ((int)(((byte)(248)))), ((int)(((byte)(249)))));
+            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.btnSignFile);
             this.Controls.Add(this.btnSendFile);
             this.Controls.Add(this.logint2);
             this.Controls.Add(this.lblHelloUser);
@@ -81,6 +111,7 @@ namespace GUI
             this.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.Name = "UserProfilePage";
             this.Size = new System.Drawing.Size(1048, 469);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -91,5 +122,7 @@ namespace GUI
         private System.Windows.Forms.Label lblHelloUser;
         private System.Windows.Forms.Label logint2;
         private System.Windows.Forms.Button btnSendFile;
+        private System.Windows.Forms.Button btnSignFile;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }

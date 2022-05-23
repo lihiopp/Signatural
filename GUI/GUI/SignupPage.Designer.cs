@@ -116,6 +116,7 @@ namespace GUI
             // 
             this.boxPasswordSignup.Location = new System.Drawing.Point(587, 309);
             this.boxPasswordSignup.Name = "boxPasswordSignup";
+            this.boxPasswordSignup.PasswordChar = '*';
             this.boxPasswordSignup.Size = new System.Drawing.Size(155, 37);
             this.boxPasswordSignup.TabIndex = 14;
             // 

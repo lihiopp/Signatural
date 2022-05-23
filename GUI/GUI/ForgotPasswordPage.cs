@@ -13,6 +13,8 @@ namespace GUI
     public partial class ForgotPasswordPage : UserControl
     {
         private Client client;
+        private int verification_code;
+        private string email;
         public ForgotPasswordPage(Client theClient)
         {
             InitializeComponent();
@@ -27,27 +29,58 @@ namespace GUI
         private void btnEmailForgotPassword_Click(object sender, EventArgs e)
         {
             //check email
-            lblVerifyCode.Visible = true;
-            boxVerifyCode.Visible = true;
-            btnOkVerifyCode.Visible = true;
-            linkSendEmailAgain.Visible = true;
+            client.Send($"{boxEmailForgotPassword.Text}");
+            string response = client.Receive();
+            if (response != "Exists")
+            {
+                MessageBoxIcon error = MessageBoxIcon.Error;
+                MessageBox.Show(response, "Oops...", MessageBoxButtons.OK, error);
+            }
+            else
+            {
+                this.email = boxEmailForgotPassword.Text;
+                verification_code = Int32.Parse(StaticClass.EmailVerification(email));
+                lblVerifyCode.Visible = true;
+                boxVerifyCode.Visible = true;
+                btnOkVerifyCode.Visible = true;
+                linkSendEmailAgain.Visible = true;
+            }
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             //send email again, check if email textbox is not nul!!.
+            if(boxEmailForgotPassword.Text == "")
+            {
+                MessageBoxIcon icon = MessageBoxIcon.Error;
+                MessageBox.Show("No email stated.", "Oops...", MessageBoxButtons.OK, icon);
+            }
+            else
+            {
+                verification_code = Int32.Parse(StaticClass.EmailVerification(this.email));
+            }
 
         }
 
         private void btnOkVerifyCode_Click(object sender, EventArgs e)
         {
             //check if code is good
-            if (!Form1.Instance.PnlContainer.Controls.ContainsKey("ResetPasswordPage"))
+            int input_code = Int32.Parse(boxVerifyCode.Text);
+            if (input_code == this.verification_code)
             {
-                ResetPasswordPage resetPasswordPage = new ResetPasswordPage(client);
-                Form1.Instance.PnlContainer.Controls.Add(resetPasswordPage);
+                if (!Form1.Instance.PnlContainer.Controls.ContainsKey("ResetPasswordPage"))
+                {
+                    ResetPasswordPage resetPasswordPage = new ResetPasswordPage(client);
+                    Form1.Instance.PnlContainer.Controls.Add(resetPasswordPage);
+                }
+                Form1.Instance.PnlContainer.Controls["ResetPasswordPage"].BringToFront();
+                StaticClass.currentPage = "ResetPasswordPage";
             }
-            Form1.Instance.PnlContainer.Controls["ResetPasswordPage"].BringToFront();
+            else
+            {
+                MessageBoxIcon icon = MessageBoxIcon.Error;
+                MessageBox.Show("Wrong code.", "Oops...", MessageBoxButtons.OK, icon);
+            }
         }
     }
 }

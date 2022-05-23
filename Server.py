@@ -1,17 +1,17 @@
 import socket, threading, re, os
 import pandas as pd
-#import enterSignatureWindow as drawSig
-#import email_verification as verify
+from matplotlib import pyplot as plt
 
 class Server:
     def __init__(self,ip,port):
-        # folders: users folders with: their signature & files, the database csv file, email verification folder  
         self.socket = socket.socket()
         self.socket.bind((ip,port))
         self.socket.listen(5)
-        self.clients = {} # dictionary of connected users and their client sockets
-        self.df = pd.read_csv(r"C:\Users\student\Desktop\michal\Signatural-main\users_data.csv")
-        # dataframe of: usernames, passwords, emails and signatures(path), num of attempts, num of forgeries.
+        # dictionary of connected users and their client sockets
+        self.clients = {}
+        # list of busy/unavailable currently connected users to the system
+        self.busy = [] 
+        self.df = pd.read_csv(r"C:\Users\idd\Desktop\Michals\cyber\Signatural\Demo\users_data.csv")
         print("Server initiallized.")
     
     def get_connection(self):
@@ -41,13 +41,9 @@ class Server:
                     while(code=="Failed"):
                         code = Server.signup(self,client)
                 if(action=="Send file"):
-                    Server.uploader(self,client,username)
-                if(action=="Logout"):
-                    new_id = len(self.clients)
-                    self.clients[new_id] = self.clients[username]
-                    del self.clients[username]
-                #if(action=="ForgotPass"):
-                    #Server.ForgotPassword()
+                    code = Server.upload(self,client,username)
+                    while(code==-1):
+                        code = Server.upload(self,client,username)
 
                 action = client.recv(1024).decode()
                 action = action[1:-1]
@@ -61,19 +57,20 @@ class Server:
                 # client hasn't logged in yet and still has
                 # an id instead of a username as the dictionary key.
                 del self.clients[client_id]
+
                 
-    #def ForgotPassword(self,client):
-     #   email = client.recv(1024).decode()
-      #  if(email in list(self.df['email'])):
-
-
     def login(self, client,client_id):
-        # Get username and passord from client
+        # Get username and password from client, or forgot password
+        # statement from client
         details = client.recv(1024).decode()
+        if(details=="Forgot Password"):
+            while(code==-1):
+                code = Server.ForgotPassword(self,client)
+            return "Out"
         details = details[1:-1].split(',')
         username = details[0]
         password = details[1]
-        
+
         # if username doesn't exists
         usernames_list = self.df['username'].tolist()
         if(username not in usernames_list):
@@ -84,24 +81,56 @@ class Server:
             user_row_index = self.df.index[self.df["username"]==username] # Find row of user
             tmp = self.df.iloc[user_row_index] # Create data frame with this row only
             user_password = tmp["password"][tmp.index[0]] # Get the value of the cell in the password columns
-            
+            user_email = tmp["email"][tmp.index[0]]
         # If given password is not the one in the df
         if(password != str(user_password)):
             client.send("Invalid password.".encode())
             return -1
+        
         else:
-            # changes client_id key to the client's username in clients dictionary
             client.send("Logged in".encode())
+            # Sends the user's email in order to perform email verification
+            client.send(user_email.encode())
+            response = "Valid"#client.recv(1024).decode()
+            if(response=="Valid"):
+                # changes client_id key to the client's username in clients dictionary
+                self.clients[username] = self.clients[client_id]
+                del self.clients[client_id]
+                #sends number of signingn attempts and number of forgeries
+                attepmts = tmp["attempts"][tmp.index[0]]
+                forgeries = tmp["forgeries"][tmp.index[0]]
+                string = str([attempts,forgeries])
+                client.send(string.encode())
 
-            self.clients[username] = self.clients[client_id]
-            del self.clients[client_id]
-            print(str(username) + " has logged in.")
-            return username
+                plt.plot(range(attempts),range(forgeries), color = 'Orange')
+                plt.xlabel("Num of attempts")
+                plt.ylabel("Num of forgeries")
+                plt.title("Number of forged signatures out of total attempts")
+                path = "C:\\Users\\idd\\Desktop\\Michals\\cyber\\Signatural\\Demo\\" + username
+                plt.savefig(path + "\\username"+"_graph.png")
+                Server.sendFile(client,"username"+"_graph.png",path)
+                
+                print(str(username) + " has logged in.")
+                return username
 
+    def ForgotPassword(self,client):
+        email = client.recv(1024).decode()
+        if(email not in list(self.df['email'])):
+            client.send("Email doesn't exists.".encode())
+            return -1
+        else:
+            client.send("Exists".encode())
+            response = client.recv(1024).deocde()
+            if(response =="valid"):
+                newPass = client.recv(1024).deocde() #####
+                user_row_index = self.df.index[self.df["email"]==email]
+                self.df.at[user_row_index,'password'] = newPass
+                self.df.to_csv(r"C:\Users\idd\Desktop\Michals\cyber\Signatural\Demo\users_data.csv", index=False)
+                return 0                
+        
 
     def signup(self, client):
         reg = "[a-z0-9]+@[a-z]+\.[a-z]{2,3}" # Email format
-        print(-1)
         # Gets user details from client
         details = client.recv(1024).decode()
         details = details[1:-1].split(',')
@@ -113,6 +142,9 @@ class Server:
         if(username in list(self.df['username'])):
             client.send("Username already exists.".encode())
             return "Failed"
+        elif(email in list(self.df['email'])):
+            client.send("Email is already taken.".encode())
+            return "Failed"
 
         # If the email is not in email format
         elif(re.search(reg, email) == None):
@@ -120,57 +152,89 @@ class Server:
             return "Failed"
         else:
             client.send("Valid".encode())
-            # Verifys the user's email
-            #Server.email_verification(email)
+            response = client.recv(1024).deocde()
+            if(response=="Valid"):
+                # Creates a folder for the new user with their signature and files.
+                path = "C:\\Users\\idd\\Desktop\\Michals\\cyber\\Signatural\\Demo\\users\\" + username
+                os.mkdir(path)
+        
+                # Gets and Saves the client's signature, names it after username
+                path = path + "\\"
+                signatureName = Server.getFile(client,path)
             
-            # Creates a folder for the new user with their signature and files.
-            path = "\\users\\" + username
-            os.mkdir(path)
-        
-            # Gets and Saves the client's signature, names it after username
-        
-            # Enters details to database
-            self.df.loc[len(self.df)] = [username,password,email,0,0]
-            self.df.index += 1
-            self.df.to_csv('users_data.csv', index=False)
-            return "Success"
+                # Enters details to database
+                self.df.loc[len(self.df)] = [username,password,email,0,0]
+                self.df.index += 1
+                self.df.to_csv(r"C:\Users\idd\Desktop\Michals\cyber\Signatural\Demo\users_data.csv", index=False)
+                return "Success"
 
 
-    def email_verification(email):
-        # check email verification python file
-        pass
+    def upload(self, client, username):
+        # Adds the user to the busy users list.
+        if(username not in self.busy):
+            self.busy.append(username)
 
-    def uploader(self, client, username):
         requested_signer = client.recv(1024).decode()
         # If requested user is connected to the system
         if(requested_signer in self.clients):
-            message = username + " wants you to sign a PDF file. Do you accept?"
-            self.clients[requested_signer].send(message.encode()) 
-            response = self.clients[requested_signer].recv(1024).decode()
-            
-            # If signer accepts, the server gets the PDF file from the sender.
-            if(response == "Yes"):
-                client.send("request accepted".encode())
-                path = r"\\users\\" + username + "\\"
-                filename = Server.getFile(client,path)
-                print("Got file: " + filename + "from: " + username + " !")
-
-                # The server sends the file to the signer.
-                Server.sendFile(self.clients[requested_signer],filename,path)
-                print("Sent file: " + filename + " to: " + requested_signer +"!")
-
-                # Gets notified if the signature was real or forged
-                authenticity = client.recv(1024).decode()
-                if(authenticity=="real"):
-                    # Gets signed file from signer and sends it to the sender
-                    signatureName = Server.getFile(self.clients[requested_signer],path)
-                    Server.sendFile(client,signatureName,path)
-                
+            if(requested_signer in self.busy):
+                client.send("User Unavailable.".encode())
+                return -1
             else:
-                client.send("request denied".encode())
+                message = username + " wants you to sign a PDF file. Do you accept?"
+                self.clients[requested_signer].send(message.encode()) 
+                response = self.clients[requested_signer].recv(1024).decode()
+            
+                # If signer accepts, the server gets the PDF file from the sender
+                if(response == "Yes"):
+                    # Adds the signer to the busy users list.
+                    if(requested_signer not in self.busy):
+                        self.busy.append(requested_signer)
+
+                    client.send("Request accepted".encode())
+                    path = r"Demo\\users\\" + username + "\\"
+
+                    # The server gets the wanted file from the sender
+                    filename = Server.getFile(client,path)
+                    print("Got file: " + filename + "from: " + username + " !")
+
+                    # The server sends the file to the signer.
+                    Server.sendFile(self.clients[requested_signer],filename,path)
+                    print("Sent file: " + filename + " to: " + requested_signer +"!")
+
+                    # Gets the signature attempt of the signer
+                    signatureName = Server.getFile(self.clients[requested_signer],path)
+
+                    # Checks if the signature is real of forged
+                    authenticity = signet.main()
+                    
+                    if(authenticity=="real"):
+                        # Gets signed file from signer
+                        self.clients[requested_signer].send("real".encode())
+                        filename = Server.getFile(self.clients[requested_signer],path)
+
+                        # Sends it to the sender
+                        client.send("real".encode())
+                        Server.sendFile(client,filename,path)
+                    else:
+                        # Notifies both users that the signature is forged
+                        # and that the deal is off.
+                        client.send("forged".encode())
+                        self.clients[requested_signer].send("forged".encode())
+
+                    return "Success!"
+                    
+                else:
+                    client.send("Request denied".encode())
+                    return -1
                 
         else:
             client.send("User not connected.".encode())
+            return -1
+
+        self.busy.pop(username)
+        self.busy.pop(requested_signer)
+
 
     def getFile(sender,path):
         filename = sender.recv(1024).decode()

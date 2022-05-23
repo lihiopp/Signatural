@@ -31,12 +31,6 @@ namespace GUI
             set { panelContainer = value; }
         }
 
-        public Button LougoutButton
-        {
-            get { return btnLogout; }
-            set { btnLogout = value; }
-        }
-
         public Button BackButton
         {
             get { return btnBack; }
@@ -48,6 +42,7 @@ namespace GUI
             InitializeComponent();
             backgroundWorker1.RunWorkerAsync(2000);
             currentPage = "HomePage";
+            
 
         }
 
@@ -59,34 +54,7 @@ namespace GUI
             HomePage homePage = new HomePage(client);
             homePage.Dock = DockStyle.Fill;
             panelContainer.Controls.Add(homePage);
-        }
-
-        private void btnBack_Click(object sender, EventArgs e)
-        {
-            if(currentPage == "LoginPage" || currentPage == "SignupPage")
-            {
-                panelContainer.Controls["HomePage"].BringToFront();
-                btnBack.Visible = false;
-            }
-            //if(currentPage== "ResetPasswordPage" || currentPage=="UserProfilePage")
-                //btnBack.Visible = false;
-            //if(currentPage=="EmailVerificationPage"||currentPage=="SignFilePage")
-                //btnBack.Visible = false;
-            //if(currentPage=="SaveSignedFilePage")
-                //btnBack.Visible = false;
-            switch (currentPage)
-            {
-                case "ForgotPasswordPage":
-                    {
-                        panelContainer.Controls["LoginPage"].BringToFront();
-                        break;
-                    }
-                case ("SendFilePage"):
-                    {
-                        panelContainer.Controls["UserProfilePage"].BringToFront();
-                        break;
-                    }
-            }
+            StaticClass.currentPage = "HomePage";
         }
 
         private void btnExit_Click(object sender, EventArgs e)
@@ -110,21 +78,6 @@ namespace GUI
             System.Diagnostics.Process.Start("https://linkedin.com");
         }
 
-        private void btnLogout_Click(object sender, EventArgs e)
-        {
-            MessageBoxIcon icon = MessageBoxIcon.Warning;
-            DialogResult result = MessageBox.Show("Are you sure you want to leave?", "Wait!", MessageBoxButtons.YesNo, icon);
-            if (result == DialogResult.Yes)
-            {
-                //send server action==logout so that it swiched username fo client_id in the dictioanry
-                panelContainer.Controls["HomePage"].BringToFront();
-                panelContainer.Controls.Clear();
-                panelContainer.Controls.Add(new HomePage(client));
-                btnBack.Visible = false;
-                btnLogout.Visible = false;
-            }
-        }
-
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker helperBW = sender as BackgroundWorker;
@@ -138,7 +91,7 @@ namespace GUI
         private int BackgroundProcessLogicMethod(BackgroundWorker bw, int a)
         {
             int result = 0;
-            client = new Client(54876);
+            client = new Client(55876);
             return result;
         }
     }

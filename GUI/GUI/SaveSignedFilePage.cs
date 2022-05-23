@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,10 +14,12 @@ namespace GUI
     public partial class SaveSignedFilePage : UserControl
     {
         private Client client;
-        public SaveSignedFilePage(Client theClient,string path)
+        private string path = "C:\\Users\\idd\\Desktop\\Michals\\cyber\\Signatural\\filesReceived\\";
+        public SaveSignedFilePage(Client theClient,string filename)
         {
             InitializeComponent();
-            webBrowser1.Navigate(path);
+            this.path = this.path + filename;
+            webBrowser1.Navigate(this.path);
             webBrowser1.Invalidate();
             Form1.Instance.BackButton.Visible = false;
             client = theClient;
@@ -37,11 +40,21 @@ namespace GUI
             saveDialog.FileName = filenamebox.Text;
             if (saveDialog.ShowDialog() == DialogResult.OK)
             {
-                string filepath = saveDialog.FileName; //in case the user changed it inside the dialog
-                //save file (or copy) to the wanted location - filepath
+                string filepath = saveDialog.FileName; // In case the user changed it inside the dialog
+                
+                // Copy file to the user's wanted location
+                FileInfo fi1 = new FileInfo(this.path);
+                FileInfo fi2 = new FileInfo(filepath);
+                fi1.CopyTo(filepath);
 
+                Form1.Instance.PnlContainer.Controls["UserProfilePage"].BringToFront();
+                StaticClass.currentPage = "UserProfilePage";
+
+                // So the page will have to be created with a new filename 
+                // in each and every deal, and the page won't just be brought to front with
+                // the incorrect filename.
+                Form1.Instance.PnlContainer.Controls.Remove(Controls["SaveSignedFilePage"]);
             }
-            Form1.Instance.PnlContainer.Controls["UserProfilePage"].BringToFront();
         }
     }
 }

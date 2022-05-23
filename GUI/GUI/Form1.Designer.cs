@@ -39,7 +39,6 @@ namespace GUI
             this.panel2 = new System.Windows.Forms.Panel();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.btnLogout = new System.Windows.Forms.Button();
             this.btnLinkedin = new System.Windows.Forms.Button();
             this.btnInsta = new System.Windows.Forms.Button();
             this.btnTwitter = new System.Windows.Forms.Button();
@@ -76,7 +75,7 @@ namespace GUI
             this.label1.ForeColor = System.Drawing.Color.DodgerBlue;
             this.label1.Location = new System.Drawing.Point(98, 25);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(287, 64);
+            this.label1.Size = new System.Drawing.Size(195, 43);
             this.label1.TabIndex = 2;
             this.label1.Text = "Signatural";
             // 
@@ -104,7 +103,6 @@ namespace GUI
             this.btnBack.TabIndex = 4;
             this.btnBack.Text = "Back";
             this.btnBack.UseVisualStyleBackColor = true;
-            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
             // label2
             // 
@@ -113,7 +111,7 @@ namespace GUI
             this.label2.ForeColor = System.Drawing.Color.Silver;
             this.label2.Location = new System.Drawing.Point(321, 38);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(479, 37);
+            this.label2.Size = new System.Drawing.Size(319, 23);
             this.label2.TabIndex = 5;
             this.label2.Text = "Your signature forgery detector!";
             // 
@@ -145,7 +143,6 @@ namespace GUI
             // panel3
             // 
             this.panel3.BackColor = System.Drawing.Color.White;
-            this.panel3.Controls.Add(this.btnLogout);
             this.panel3.Controls.Add(this.btnLinkedin);
             this.panel3.Controls.Add(this.btnInsta);
             this.panel3.Controls.Add(this.btnTwitter);
@@ -155,27 +152,13 @@ namespace GUI
             this.panel3.Size = new System.Drawing.Size(90, 507);
             this.panel3.TabIndex = 7;
             // 
-            // btnLogout
-            // 
-            this.btnLogout.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnLogout.BackgroundImage")));
-            this.btnLogout.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btnLogout.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnLogout.ForeColor = System.Drawing.Color.White;
-            this.btnLogout.Location = new System.Drawing.Point(12, 333);
-            this.btnLogout.Name = "btnLogout";
-            this.btnLogout.Size = new System.Drawing.Size(62, 56);
-            this.btnLogout.TabIndex = 6;
-            this.btnLogout.UseVisualStyleBackColor = true;
-            this.btnLogout.Visible = false;
-            this.btnLogout.Click += new System.EventHandler(this.btnLogout_Click);
-            // 
             // btnLinkedin
             // 
             this.btnLinkedin.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnLinkedin.BackgroundImage")));
             this.btnLinkedin.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.btnLinkedin.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnLinkedin.ForeColor = System.Drawing.Color.White;
-            this.btnLinkedin.Location = new System.Drawing.Point(12, 251);
+            this.btnLinkedin.Location = new System.Drawing.Point(12, 339);
             this.btnLinkedin.Name = "btnLinkedin";
             this.btnLinkedin.Size = new System.Drawing.Size(62, 51);
             this.btnLinkedin.TabIndex = 5;
@@ -188,7 +171,7 @@ namespace GUI
             this.btnInsta.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.btnInsta.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnInsta.ForeColor = System.Drawing.Color.White;
-            this.btnInsta.Location = new System.Drawing.Point(12, 164);
+            this.btnInsta.Location = new System.Drawing.Point(12, 210);
             this.btnInsta.Name = "btnInsta";
             this.btnInsta.Size = new System.Drawing.Size(62, 51);
             this.btnInsta.TabIndex = 4;
@@ -214,7 +197,7 @@ namespace GUI
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 26F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(244)))), ((int)(((byte)(248)))), ((int)(((byte)(249)))));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
@@ -248,7 +231,6 @@ namespace GUI
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel3;
-        private System.Windows.Forms.Button btnLogout;
         private System.Windows.Forms.Button btnLinkedin;
         private System.Windows.Forms.Button btnInsta;
         private System.Windows.Forms.Button btnTwitter;

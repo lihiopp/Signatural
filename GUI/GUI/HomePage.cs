@@ -22,7 +22,7 @@ namespace GUI
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            client.Send("Login");
+            client.Send("[Login]");
             if(!Form1.Instance.PnlContainer.Controls.ContainsKey("LoginPage"))
             {
                 LoginPage loginPage = new LoginPage(client);
@@ -30,12 +30,12 @@ namespace GUI
             }
             Form1.Instance.PnlContainer.Controls["LoginPage"].BringToFront();
             Form1.Instance.BackButton.Visible = true;
-            Form1.Instance.LougoutButton.Visible = true;
+            StaticClass.currentPage = "LoginPage";
         }
 
         private void btnSignup_Click(object sender, EventArgs e)
         {
-            client.Send("Signup");
+            client.Send("[Signup]");
             if (!Form1.Instance.PnlContainer.Controls.ContainsKey("SignupPage"))
             {
                 SignupPage signupPage = new SignupPage(client);
@@ -43,7 +43,7 @@ namespace GUI
             }
             Form1.Instance.PnlContainer.Controls["SignupPage"].BringToFront();
             Form1.Instance.BackButton.Visible = true;
-            Form1.Instance.LougoutButton.Visible = true;
+            StaticClass.currentPage = "SignupPage";
         }
     }
 }

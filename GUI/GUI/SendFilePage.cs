@@ -18,7 +18,7 @@ namespace GUI
             InitializeComponent();
             browseFilesPanel.Visible = false;
             btnSendFile.Visible = false;
-            //lblSignerUserStatus.Text = "";
+            lblSignerUserStatus.Text = "";
             Form1.Instance.BackButton.Visible = true ;
             client = theClient;
         }
@@ -46,12 +46,35 @@ namespace GUI
         private void btnSendFile_Click(object sender, EventArgs e)
         {
             //send file to server
-            if (!Form1.Instance.PnlContainer.Controls.ContainsKey("SaveSignedFilePage"))
+            client.SendFile(filenamebox.Text);
+            Console.WriteLine($"Sent {filenamebox.Text}!");
+
+            // Gets notified if there was a forgery attempt or not (signature is real / forged)
+            string response = client.Receive();
+            if (response == "real")
             {
-                SaveSignedFilePage saveSignedFilePage = new SaveSignedFilePage(client,filenamebox.Text);
-                Form1.Instance.PnlContainer.Controls.Add(saveSignedFilePage);
+                string filename = client.Receive();
+                client.GetFile(filename);
+
+                Form1.Instance.BackButton.Visible = false;
+                if (!Form1.Instance.PnlContainer.Controls.ContainsKey("SaveSignedFilePage"))
+                {
+                    SaveSignedFilePage saveSignedFilePage = new SaveSignedFilePage(client, filename);
+                    Form1.Instance.PnlContainer.Controls.Add(saveSignedFilePage);
+                }
+                Form1.Instance.PnlContainer.Controls["SaveSignedFilePage"].BringToFront();
+                StaticClass.currentPage = "SaveSignedFilePage";
+
+                Form1.Instance.PnlContainer.Controls.Remove(Controls["SendFilePage"]);
             }
-            Form1.Instance.PnlContainer.Controls["SaveSignedFilePage"].BringToFront();
+            else
+            {
+                MessageBoxIcon icon = MessageBoxIcon.Stop;
+                MessageBox.Show("This user tries to forge a signature!", "The Deal's Off!", MessageBoxButtons.OK, icon);
+                Form1.Instance.PnlContainer.Controls["UserProfilePage"].BringToFront();
+                StaticClass.currentPage = "UserProfilePage";
+                Form1.Instance.PnlContainer.Controls.Remove(Controls["SendFilePage"]);
+            }
         }
 
         private void btnOkSignerUsername_Click(object sender, EventArgs e)
@@ -64,8 +87,17 @@ namespace GUI
             }
             else 
             {
-                if (lblSignerUserStatus.Text == "User accepted your request")
+                client.Send(boxUsernameOfSigner.Text);
+                string response = client.Receive();
+                lblSignerUserStatus.Text = response;
+                if (response == "Request accepted")
+                {
+                    lblSignerUserStatus.ForeColor = Color.DarkSeaGreen;
                     browseFilesPanel.Visible = true;
+                }
+                else
+                    lblSignerUserStatus.ForeColor = Color.DeepPink;
+
             }
         }
     }
