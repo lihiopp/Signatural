@@ -81,7 +81,8 @@ class Server:
             user_row_index = self.df.index[self.df["username"]==username] # Find row of user
             tmp = self.df.iloc[user_row_index] # Create data frame with this row only
             user_password = tmp["password"][tmp.index[0]] # Get the value of the cell in the password columns
-            user_email = tmp["email"][tmp.index[0]]
+            email = tmp["email"][tmp.index[0]]
+            print(email)
         # If given password is not the one in the df
         if(password != str(user_password)):
             client.send("Invalid password.".encode())
@@ -89,29 +90,11 @@ class Server:
         
         else:
             client.send("Logged in".encode())
-            # Sends the user's email in order to perform email verification
-            client.send(user_email.encode())
-            response = "Valid"#client.recv(1024).decode()
-            if(response=="Valid"):
-                # changes client_id key to the client's username in clients dictionary
-                self.clients[username] = self.clients[client_id]
-                del self.clients[client_id]
-                #sends number of signingn attempts and number of forgeries
-                attepmts = tmp["attempts"][tmp.index[0]]
-                forgeries = tmp["forgeries"][tmp.index[0]]
-                string = str([attempts,forgeries])
-                client.send(string.encode())
-
-                plt.plot(range(attempts),range(forgeries), color = 'Orange')
-                plt.xlabel("Num of attempts")
-                plt.ylabel("Num of forgeries")
-                plt.title("Number of forged signatures out of total attempts")
-                path = "C:\\Users\\idd\\Desktop\\Michals\\cyber\\Signatural\\Demo\\" + username
-                plt.savefig(path + "\\username"+"_graph.png")
-                Server.sendFile(client,"username"+"_graph.png",path)
-                
-                print(str(username) + " has logged in.")
-                return username
+            client.send(email.encode())
+            self.clients[username] = self.clients[client_id]
+            del self.clients[client_id]
+            print(str(username) + " has logged in.")
+            return username
 
     def ForgotPassword(self,client):
         email = client.recv(1024).decode()
