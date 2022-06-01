@@ -1,6 +1,8 @@
 import socket, threading, re, os
 import pandas as pd
-from matplotlib import pyplot as plt
+from GoogleDriveAPI import GoogleDriveAPI
+import addSigtoPDF as merge
+import signet
 
 class Server:
     def __init__(self,ip,port):
@@ -10,8 +12,9 @@ class Server:
         # dictionary of connected users and their client sockets
         self.clients = {}
         # list of busy/unavailable currently connected users to the system
-        self.busy = [] 
-        self.df = pd.read_csv(r"C:\Users\idd\Desktop\Michals\cyber\Signatural\Demo\users_data.csv")
+        self.busy = []
+        self.available = []
+        self.df = pd.read_csv(os.getcwd() + "\\Demo\\users_data.csv")
         print("Server initiallized.")
     
     def get_connection(self):
@@ -30,7 +33,7 @@ class Server:
         # Handles the clients actions in the server
         try:
             action = client.recv(1024).decode()
-            action = action[1:-1]
+            action = action
             while(action!="Exit"):
                 if(action=="Login"):
                     username = Server.login(self, client,client_id)
@@ -41,13 +44,19 @@ class Server:
                     while(code=="Failed"):
                         code = Server.signup(self,client)
                 if(action=="Send file"):
+                    print(username+ " is preaparing to send file...")
                     code = Server.upload(self,client,username)
                     while(code==-1):
                         code = Server.upload(self,client,username)
-
+                if(action=="Sign file"):
+                    print(action)
+                    self.available.append(username)
+                    print(username+ " is preaparing to sign file...")
+                    
                 action = client.recv(1024).decode()
-                action = action[1:-1]
-        except:
+                action = action
+        except Exception as e:
+            print(e)
             # Connection was cut off, closes the socket
             # and deletes it from the clients dictionary
             try:
@@ -67,10 +76,9 @@ class Server:
             while(code==-1):
                 code = Server.ForgotPassword(self,client)
             return "Out"
-        details = details[1:-1].split(',')
+        details = details.split(',')
         username = details[0]
         password = details[1]
-
         # if username doesn't exists
         usernames_list = self.df['username'].tolist()
         if(username not in usernames_list):
@@ -82,19 +90,27 @@ class Server:
             tmp = self.df.iloc[user_row_index] # Create data frame with this row only
             user_password = tmp["password"][tmp.index[0]] # Get the value of the cell in the password columns
             email = tmp["email"][tmp.index[0]]
-            print(email)
         # If given password is not the one in the df
         if(password != str(user_password)):
             client.send("Invalid password.".encode())
             return -1
         
         else:
-            client.send("Logged in".encode())
-            client.send(email.encode())
-            self.clients[username] = self.clients[client_id]
-            del self.clients[client_id]
-            print(str(username) + " has logged in.")
-            return username
+            client.send(("Logged in," + email).encode())
+            response = client.recv(1024).decode()
+            if(response=="Valid"):
+                # Creates the activity graph for the user and sends it
+                attempts = str(tmp["attempts"][tmp.index[0]])
+                forgeries = str(tmp["forgeries"][tmp.index[0]])
+                client.send((attempts+","+forgeries).encode())
+
+                # Replace client_id with username in the clients dictionary
+                self.clients[username] = self.clients[client_id]
+                del self.clients[client_id]
+                
+                print(str(username) + " has logged in.")
+                return username
+
 
     def ForgotPassword(self,client):
         email = client.recv(1024).decode()
@@ -103,13 +119,11 @@ class Server:
             return -1
         else:
             client.send("Exists".encode())
-            response = client.recv(1024).deocde()
-            if(response =="valid"):
-                newPass = client.recv(1024).deocde() #####
-                user_row_index = self.df.index[self.df["email"]==email]
-                self.df.at[user_row_index,'password'] = newPass
-                self.df.to_csv(r"C:\Users\idd\Desktop\Michals\cyber\Signatural\Demo\users_data.csv", index=False)
-                return 0                
+            newPass = client.recv(1024).deocde()
+            user_row_index = self.df.index[self.df["email"]==email]
+            self.df.at[user_row_index,'password'] = newPass
+            self.df.to_csv(os.getcwd() + "\\Demo\\users_data.csv", index=False)
+            return 0                
         
 
     def signup(self, client):
@@ -135,76 +149,137 @@ class Server:
             return "Failed"
         else:
             client.send("Valid".encode())
-            response = client.recv(1024).deocde()
-            if(response=="Valid"):
-                # Creates a folder for the new user with their signature and files.
-                path = "C:\\Users\\idd\\Desktop\\Michals\\cyber\\Signatural\\Demo\\users\\" + username
+
+            # Creates a folder for the new user with their signature and attempted signatures.
+            path = os.getcwd() + "\\Demo\\users"
+            if(os.path.exists(path) == False):
                 os.mkdir(path)
-        
-                # Gets and Saves the client's signature, names it after username
-                path = path + "\\"
-                signatureName = Server.getFile(client,path)
+            path = os.getcwd() +"\\Demo\\users\\" + username
+            os.mkdir(path)
+            # Gets and Saves the client's signature, names it after his username
+            path = path + "\\"
+            try:
+                current_dir = os.getcwd()
+                os.chdir(current_dir+'\GoogleDriveAPI')
+                GoogleDriveAPI.start()
+            except:
+                GoogleDriveAPI.authanticate()
+                GoogleDriveAPI.start()
+            finally:
+                GoogleDriveAPI.download(username+'.png',path)
+                os.chdir(current_dir)
             
-                # Enters details to database
-                self.df.loc[len(self.df)] = [username,password,email,0,0]
-                self.df.index += 1
-                self.df.to_csv(r"C:\Users\idd\Desktop\Michals\cyber\Signatural\Demo\users_data.csv", index=False)
-                return "Success"
+            # Enters details to database
+            self.df.loc[len(self.df)] = [username,password,email,0,0]
+            self.df.index += 1
+            self.df.to_csv(os.getcwd() + "\\Demo\\users_data.csv", index=False)
+            return "Success"
 
 
     def upload(self, client, username):
         # Adds the user to the busy users list.
         if(username not in self.busy):
             self.busy.append(username)
-
+            
         requested_signer = client.recv(1024).decode()
+        print(requested_signer)
         # If requested user is connected to the system
         if(requested_signer in self.clients):
-            if(requested_signer in self.busy):
+            if((requested_signer in self.busy) or (requested_signer not in self.available)):
                 client.send("User Unavailable.".encode())
+                self.busy.remove(username)
+                print(username + " looked for an unavailable user.")
                 return -1
             else:
                 message = username + " wants you to sign a PDF file. Do you accept?"
-                self.clients[requested_signer].send(message.encode()) 
-                response = self.clients[requested_signer].recv(1024).decode()
-            
+                #self.clients[requested_signer].send(message.encode())
+                print("0")
+                socket = self.clients[requested_signer]
+                #response = socket.recv(1024).decode()
+                response = "Yes"
+                print("1"+response)
                 # If signer accepts, the server gets the PDF file from the sender
                 if(response == "Yes"):
-                    # Adds the signer to the busy users list.
-                    if(requested_signer not in self.busy):
-                        self.busy.append(requested_signer)
+                    # Adds the signer to the busy users list
+                    # and removes him from the available one.
+                    
+                    self.busy.append(requested_signer)
+                    self.available.remove(requested_signer)
+                    print("1")
+                    client.send("User available".encode())
+                    print(username + " is sending file to " + requested_signer)
+                    sender_path = os.getcwd()+ r"\\Demo\\users\\" + username + "\\"
 
-                    client.send("Request accepted".encode())
-                    path = r"Demo\\users\\" + username + "\\"
-
-                    # The server gets the wanted file from the sender
-                    filename = Server.getFile(client,path)
-                    print("Got file: " + filename + "from: " + username + " !")
-
-                    # The server sends the file to the signer.
-                    Server.sendFile(self.clients[requested_signer],filename,path)
-                    print("Sent file: " + filename + " to: " + requested_signer +"!")
+                    # The server gets the file of the sender
+                    filename = client.recv(1024).decode()
+                    print("2" + filename)
+                    current_dir = os.getcwd()
+                    os.chdir(current_dir+'\GoogleDriveAPI')
+                    GoogleDriveAPI.start()
+                    GoogleDriveAPI.download(filename,sender_path)
+                    os.chdir(current_dir)
+                    #
+                    
+                    # The server sends the filename to the signer
+                    # so that he can download it.
+                    self.clients[requested_signer].send(filename.encode())
+                    print("3 after google drive")
 
                     # Gets the signature attempt of the signer
-                    signatureName = Server.getFile(self.clients[requested_signer],path)
-
+                    signer_path = os.getcwd()+ r"\\Demo\\users\\" + requested_signer + "\\"
+                    #details = self.clients[requested_signer].recv(1024).decode()
+                    #signatureName = details.split(',')[0]
+                    #pageNum = details.split(',')[1]
+                    print(requested_signer+"_sig")
+                    current_dir = os.getcwd()
+                    os.chdir(current_dir+'\GoogleDriveAPI')
+                    GoogleDriveAPI.download(requested_signer+"_sig.png",signer_path)
+                    os.chdir(current_dir)
+                    signatureName = requested_signer+"_sig.png"
+                    #
+                    
                     # Checks if the signature is real of forged
-                    authenticity = signet.main()
+                    authenticity = signet.main(signer_path+requested_signer+'.png',signer_path+signatureName)
+                    print(authenticity)
+                    
+                    # Updates activity status: attempts and forgeries
+                    user_row_index = self.df.index[self.df["username"]==username]
+                    self.df.at[user_row_index[0], 'attempts'] += 1
                     
                     if(authenticity=="real"):
-                        # Gets signed file from signer
-                        self.clients[requested_signer].send("real".encode())
-                        filename = Server.getFile(self.clients[requested_signer],path)
+                        # Adds signature to file
+                        status = merge.start(sender_path+filename,signer_path+signatureName,1)
+                        # Notifys signer that the signature is real
+                        if(status=="Failed"):
+                            self.clients[requested_signer].send("real,Failed".encode())
+                            client.send("real,Failed".encode())
+                            return
+                        
 
-                        # Sends it to the sender
-                        client.send("real".encode())
-                        Server.sendFile(client,filename,path)
+                        # Renames the signed file (the result) according to the number of identical files
+                        signed_filename = filename.split('.')[0]+"_signed"+filename.split('.')[1]
+                        os.rename(sender_path+filename, sender_path+signed_filename)
+
+                        # Uploads it to drive
+                        os.chdir(current_dir+'\GoogleDriveAPI')
+                        GoogleDriveAPI.upload(sender_path+signed_filename,signed_filename)
+                        os.chdir(current_dir)
+
+                        # Sends the name to the sender so that he can download it
+                        self.clients[requested_signer].send(("real,Success,"+signed_filename).encode())
+                        client.send(("real,Success,"+signed_filename).encode())
+                        client.send(signed_filename.encode())
                     else:
                         # Notifies both users that the signature is forged
                         # and that the deal is off.
+                        self.df.at[user_row_index[0], 'forgeries'] += 1
                         client.send("forged".encode())
                         self.clients[requested_signer].send("forged".encode())
 
+                    # Save changes on dataframe
+                    current_dir = os.getcwd()
+                    os.remove(os.getcwd() + "\\Demo\\users_data.csv")
+                    self.df.to_csv(current_dir+"\\Demo\\users_data.csv", index=False)
                     return "Success!"
                     
                 else:
@@ -213,33 +288,13 @@ class Server:
                 
         else:
             client.send("User not connected.".encode())
+            self.busy.remove(username)
             return -1
 
-        self.busy.pop(username)
-        self.busy.pop(requested_signer)
+        self.busy.remove(username)
+        self.busy.remove(requested_signer)
 
-
-    def getFile(sender,path):
-        filename = sender.recv(1024).decode()
-        path = path + filename
-        with open(path,'wb') as f:
-            while True:
-                data = client.recv(1024)
-                if not data:
-                    break
-                f.write(data)
-        return filename
-
-    def sendFile(getter,filename,path):
-        getter.send(filename.encode())
-        path = path + filename
-        with open (path, 'rb') as f:
-            while True:
-                data=f.read(1024)
-                if not data:
-                    break
-                getter.send(data.encode())
-                
+        
 def main():
     server = Server("",55876)
     while True:
