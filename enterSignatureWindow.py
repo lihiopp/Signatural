@@ -1,7 +1,6 @@
 import tkinter as tk
 from PIL import ImageGrab
 import win32gui, sys
-from functools import partial
 
 def create_window():
     '''Creates window.'''
@@ -28,12 +27,12 @@ def clearScreen():
     '''Clears canvas.'''
     canvas.delete("all")
     
-def saveSignature(username):
+def saveSignature():
     '''Saves the signature as a png file.'''
     HWND = canvas.winfo_id()  # get the handle of the canvas
     coords = win32gui.GetWindowRect(HWND)  # get the coordinate of the canvas
-    im = ImageGrab.grab(coords).save(username+'.png')
-    print(username+'.png')
+    im = ImageGrab.grab(coords).save(signature_name+".png")
+    print(signature_name+".png")
     #print("Image coordinates: " + str(coords)) # tuple of (left,upper,right,lower)
     root.destroy()
 
@@ -45,12 +44,12 @@ def create_canvas(root):
     tk.Label(root, text="Draw your signature, enter 'Done!' when finished.").pack()
     return canvas
 
-def create_buttons(username):
+def create_buttons():
     '''Creates clear & done buttons.'''
     button_clear = tk.Button(text = "Clear", command = clearScreen)
     button_clear.pack(side="left", fill="both",expand=True)
 
-    button_done = tk.Button(text = "Done!", command = partial(saveSignature,username))
+    button_done = tk.Button(text = "Done!", command = saveSignature)
     button_done.pack(side="right", fill="both",expand=True)
 
 
@@ -59,8 +58,10 @@ def main(username):
     root = create_window()
     root.bind('<Motion>', mmove)# binds event=motion to the window and mmove
     global canvas
+    global signature_name
+    signature_name = username
     canvas = create_canvas(root)
-    create_buttons(username)
+    create_buttons()
     # coordinates of mouse-hovering movements on canvas are sent to mmove function
     canvas.bind("<Motion>", mmove)
     # coordinates of next mouse-clicked movements are sent to draw function
