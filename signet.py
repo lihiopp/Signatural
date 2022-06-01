@@ -39,9 +39,9 @@ def main(signature1,signature2):
     
     # Make sure the images have the same size.
     testnp.resize(realnp.shape)
-    mse = mse(realnp,testnp)
-    ssim = ssim(realnp,testnp)
-    if(mse < 0.3 and ssim > 0.7)
+    mse_result = mse(realnp,testnp)
+    ssim_result = ssim(realnp,testnp)
+    if(mse_result < 0.3 and ssim_result > 0.7):
         return "real"
-    else
+    else:
         return "forged"
