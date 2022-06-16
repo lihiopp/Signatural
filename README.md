@@ -2,8 +2,29 @@
 Signature forgery detection sofware that enables sending and digital signing of files.
 ________________________________________________
 
-## Introduction
+## Table of Contents
+  [Intoduction](https://github.com/lihiopp/Signatural/edit/main/README.md#Intoduction)
+  
+  [Technologies](https://github.com/lihiopp/Signatural/edit/main/README.md#Technologies)
+  
+  [Installation](https://github.com/lihiopp/Signatural/edit/main/README.md#Installation)
+  
+  - [Install Packages](https://github.com/lihiopp/Signatural/edit/main/README.md#Install-Packages)
+    
+  - [Get Google Drive's API Ready](https://github.com/lihiopp/Signatural/edit/main/README.md#Get-Google-Drive's-API-Ready)
+  
+  - [Arrange Database](https://github.com/lihiopp/Signatural/edit/main/README.md#Arrange-Database)
+  
+  [Implementation](https://github.com/lihiopp/Signatural/edit/main/README.md#Implementation)
+  
+  - [Signet: Signature Forgery Detection](https://github.com/lihiopp/Signatural/edit/main/README.md#Signet:-Signature-Forgery-Detection)
+  
+  - [Email Verification](https://github.com/lihiopp/Signatural/edit/main/README.md#Email-Verification)
+  
+  [References](https://github.com/lihiopp/Signatural/edit/main/README.md#References)
+  
 
+## Introduction
 Signing papers is needed in every aspect of our daily lives, though it only takes a couple of seconds. To save the long way a person has to go just to sign a document, there's a need in a digital paper signing softwar. Also, in a world where the demand for protecting one's personal identity arises, making signature counterfeiting harder is important. As a part of my graduation project in the Cyber major, I have created a system that establishes a connection between two clients, enables signing on papers and detects forgery attempts. It stores all files in google drive.
 
 ## Technologies:
@@ -35,12 +56,12 @@ On the **client** machine: ```$ pip install pydrive```
 ### Get Google Drive's API ready
 To start using Google Drive's API that is used in this project, you need to get authantication for Google Services APIs. These guidelines are meant to get authantication to use the google drive account that I have created for ***this project only***. In case you are intrested in using your own drive account or start your own application, [view here](https://d35mpxyw7m7k7g.cloudfront.net/bigdata_1/Get+Authentication+for+Google+Service+API+.pdf).
   1. Run the authantication() function in the GoogleDriveAPI.py library.
-  2. A website was opened in your browser. Click "continue" and copy the given code. Paste it in your terminal and press enter.
+  2. A website was opened in your browser. Click "continue" and copy the given code. Paste it in your terminal.
   3. Once you get "Authantication Successful" output you are good to go.
 
 Please note that this manual authantication is needed every once in a while because of Google's security requirements, otherwise you will get a credentials error. With each running of the code this process is done automaticaly. Also, there is a 100 authantications limit for the same reason.
 
-### Arrange Data Base
+### Arrange Database
 A users_data.csv file contains the details of the system's signed users. Create one on the server machine before your first running in this format:
 ```
 # Python Implementation 
@@ -53,7 +74,7 @@ df.to_csv("users_data.csv")
 ```
 
 ## Implementation
-### Signet: forgery detection
+### Signet: Signature Forgery Detection
 The system performs offline handwritten signature verification of the static type. That is, it uses 2 signature drawings, it does not monitor them whilst the signer is signing. To perform such thing, this project used image processing methods and the mathematical modules: [Structure Similarity](https://ourcodeworld.com/articles/read/991/how-to-calculate-the-structural-similarity-index-ssim-between-two-images-with-python) and [Mean Squared Error](https://www.freecodecamp.org/news/machine-learning-mean-squared-error-regression-line-c7dde9a26b93/).
 
 ![MSE](https://cdn-media-1.freecodecamp.org/images/hmZydSW9YegiMVPWq2JBpOpai3CejzQpGkNG)
@@ -63,10 +84,12 @@ The system performs offline handwritten signature verification of the static typ
 These provied % of similarity: **low SSIM means forgery, while low MSE means real.** Combining the two, I've set a range in which the result is either "real" or "forged".
 
 
-### Email verification
+
+### Email Verification
 Using an SMTP server, we are able to send emails in gmail using python. If you are interested in implementing this in your code, lower the security level of your google account:
 
 ```>> Go to your Google Account >> Security >> Turn On "Less secure app access" >> Save```
+
 
 
 ## References:
