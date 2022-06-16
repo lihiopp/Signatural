@@ -27,7 +27,7 @@ ________________________________________________
 ## Introduction
 Signing papers is needed in every aspect of our daily lives, though it only takes a couple of seconds. To save the long way a person has to go just to sign a document, there's a need in a digital paper signing softwar. Also, in a world where the demand for protecting one's personal identity arises, making signature counterfeiting harder is important. As a part of my graduation project in the Cyber major, I have created a system that establishes a connection between two clients, enables signing on papers and detects forgery attempts. It stores all files in google drive.
 
-## Technologies:
+## Technologies
 Please note that this project runs on windows and supports PDF files only.
  * Python 3.8 (64 bit)
  * .net framework 4.8 (using c#)
