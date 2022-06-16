@@ -30,7 +30,7 @@ $ pip install PuMyPDF
 $ pip install scikit-image
 $ pip install torch
 ```
-On the **client** machine: ```pip install pydrive```
+On the **client** machine: ```$ pip install pydrive```
 
 ### Get Google Drive's API ready
 To start using Google Drive's API that is used in this project, you need to get authantication for Google Services APIs. These guidelines are meant to get authantication to use the google drive account that I have created for ***this project only***. In case you are intrested in using your own drive account or start your own application, [view here](https://d35mpxyw7m7k7g.cloudfront.net/bigdata_1/Get+Authentication+for+Google+Service+API+.pdf).
