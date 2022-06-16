@@ -3,25 +3,25 @@ Signature forgery detection sofware that enables sending and digital signing of 
 ________________________________________________
 
 ## Table of Contents
-  [Intoduction](https://github.com/lihiopp/Signatural/edit/main/README.md#Intoduction)
+  [Intoduction](https://github.com/lihiopp/Signatural#introduction)
   
-  [Technologies](https://github.com/lihiopp/Signatural/edit/main/README.md#Technologies)
+  [Technologies](https://github.com/lihiopp/Signatural#Technologies)
   
-  [Installation](https://github.com/lihiopp/Signatural/edit/main/README.md#Installation)
+  [Installation](https://github.com/lihiopp/Signatural#Installation)
   
-  - [Install Packages](https://github.com/lihiopp/Signatural/edit/main/README.md#Install-Packages)
+  - [Install Packages](https://github.com/lihiopp/Signatural#Install-Packages)
     
-  - [Get Google Drive's API Ready](https://github.com/lihiopp/Signatural/edit/main/README.md#Get-Google-Drive's-API-Ready)
+  - [Get Google Drive's API Ready](https://github.com/lihiopp/Signatural#Get-Google-Drive's-API-Ready)
   
-  - [Arrange Database](https://github.com/lihiopp/Signatural/edit/main/README.md#Arrange-Database)
+  - [Arrange Database](https://github.com/lihiopp/Signatural#Arrange-Database)
   
-  [Implementation](https://github.com/lihiopp/Signatural/edit/main/README.md#Implementation)
+  [Implementation](https://github.com/lihiopp/Signatural#Implementation)
   
-  - [Signet: Signature Forgery Detection](https://github.com/lihiopp/Signatural/edit/main/README.md#Signet:-Signature-Forgery-Detection)
+  - [Signet: Signature Forgery Detection](https://github.com/lihiopp/Signatural#Signet:-Signature-Forgery-Detection)
   
-  - [Email Verification](https://github.com/lihiopp/Signatural/edit/main/README.md#Email-Verification)
+  - [Email Verification](https://github.com/lihiopp/Signatural#Email-Verification)
   
-  [References](https://github.com/lihiopp/Signatural/edit/main/README.md#References)
+  [References](https://github.com/lihiopp/Signatural#References)
   
 
 ## Introduction
