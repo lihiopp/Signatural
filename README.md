@@ -95,7 +95,7 @@ Using an SMTP server, we are able to send emails in gmail using python. If you a
 
 
 
-## References:
+## References
 [SigNet](https://medium.com/swlh/signet-detecting-signature-similarity-using-machine-learning-deep-learning-is-this-the-end-of-1a6bdc76b04b)
 
 [Structural Similarity Index](https://ourcodeworld.com/articles/read/991/how-to-calculate-the-structural-similarity-index-ssim-between-two-images-with-python)
