@@ -27,6 +27,7 @@ ________________________________________________
 ## Introduction
 Signing papers is needed in every aspect of our daily lives, though it only takes a couple of seconds. To save the long way a person has to go just to sign a document, there's a need in a digital paper signing softwar. Also, in a world where the demand for protecting one's personal identity arises, making signature counterfeiting harder is important. As a part of my graduation project in the Cyber major, I have created a system that establishes a connection between two clients, enables signing on papers and detects forgery attempts. It stores all files in google drive.
 
+
 ## Technologies
 Please note that this project runs on windows and supports PDF files only.
  * Python 3.8 (64 bit)
@@ -37,6 +38,7 @@ Please note that this project runs on windows and supports PDF files only.
  * PuMyPDF 1.19.6
  * scikit-image 0.19.3
  * torch 1.11.0
+
 
 ## Installation
 To setup this project, install it locally and follow the following steps.
@@ -73,6 +75,7 @@ df = pd.DataFrame(data,columns=['username', 'password', 'email','attempts','forg
 df.to_csv("users_data.csv")
 ```
 
+
 ## Implementation
 ### Signet: Signature Forgery Detection
 The system performs offline handwritten signature verification of the static type. That is, it uses 2 signature drawings, it does not monitor them whilst the signer is signing. To perform such thing, this project used image processing methods and the mathematical modules: [Structure Similarity](https://ourcodeworld.com/articles/read/991/how-to-calculate-the-structural-similarity-index-ssim-between-two-images-with-python) and [Mean Squared Error](https://www.freecodecamp.org/news/machine-learning-mean-squared-error-regression-line-c7dde9a26b93/).
@@ -81,7 +84,7 @@ The system performs offline handwritten signature verification of the static typ
 ![SSIM](https://miro.medium.com/max/1400/0*N-h0ov6YYCJ_tm4U.png)
 
 
-These provied % of similarity: **low SSIM means forgery, while low MSE means real.** Combining the two, I've set a range in which the result is either "real" or "forged".
+These provide % of similarity: **low SSIM means forgery, while low MSE means real.** Combining the two, I've set a range in which the result is either "real" or "forged".
 
 
 
