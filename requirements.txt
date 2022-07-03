@@ -1,8 +1,6 @@
-Packages I have installed locally:
 PyMuPDF
 scikit-image
 torch
 regex
-os
 threading
 pydrive
