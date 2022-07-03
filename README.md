@@ -57,9 +57,9 @@ On the **client** machine: ```$ pip install pydrive```
 
 ### Get Google Drive's API ready
 To start using Google Drive's API that is used in this project, you need to get authantication for Google Services APIs. These guidelines are meant to get authantication to use the google drive account that I have created for ***this project only***. In case you are intrested in using your own drive account or start your own application, [view here](https://d35mpxyw7m7k7g.cloudfront.net/bigdata_1/Get+Authentication+for+Google+Service+API+.pdf).
-  1. Run the authantication() function in the GoogleDriveAPI.py library.
-  2. A website was opened in your browser. Click "continue" and copy the given code. Paste it in your terminal.
-  3. Once you get "Authantication Successful" output you are good to go.
+  1. Run the **authantication()** function in the GoogleDriveAPI.py library.
+  2. A website was opened in your browser. Click **"continue"** and copy the given code. Paste it in your terminal.
+  3. Once you get the **"Authantication Successful"** output you are good to go.
 
 Please note that this manual authantication is needed every once in a while because of Google's security requirements, otherwise you will get a credentials error. With each running of the code this process is done automaticaly. Also, there is a 100 authantications limit for the same reason.
 
