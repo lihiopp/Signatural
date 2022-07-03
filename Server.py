@@ -183,6 +183,7 @@ class Server:
             self.busy.append(username)
             
         requested_signer = client.recv(1024).decode()
+        print(requested_signer)
         # If requested user is connected to the system
         if(requested_signer in self.clients):
             if((requested_signer in self.busy) or (requested_signer not in self.available)):
@@ -284,7 +285,6 @@ class Server:
         self.busy.remove(requested_signer)
 
 
-    
 def main():
     server = Server("",55876)
     while True:

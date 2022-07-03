@@ -1,32 +1,105 @@
 # Signatural: Signature Forgery Detection Software
-This system is my final project of the Cyber/Softwar-Engineering major.
+Signature forgery detection sofware that enables sending and digital signing of files.
 ________________________________________________
 
+## Table of Contents
+  [Intoduction](https://github.com/lihiopp/Signatural#introduction)
+  
+  [Technologies](https://github.com/lihiopp/Signatural#Technologies)
+  
+  [Installation](https://github.com/lihiopp/Signatural#Installation)
+  
+  - [Install Packages](https://github.com/lihiopp/Signatural#Install-Packages)
+    
+  - [Get Google Drive's API Ready](https://github.com/lihiopp/Signatural#Get-Google-Drive's-API-Ready)
+  
+  - [Arrange Database](https://github.com/lihiopp/Signatural#Arrange-Database)
+  
+  [Implementation](https://github.com/lihiopp/Signatural#Implementation)
+  
+  - [Signet: Signature Forgery Detection](https://github.com/lihiopp/Signatural#Signet:-Signature-Forgery-Detection)
+  
+  - [Email Verification](https://github.com/lihiopp/Signatural#Email-Verification)
+  
+  [References](https://github.com/lihiopp/Signatural#References)
+  
+
 ## Introduction
-
-In a world where there is a database of signatures of all citizens, there's a need in signing documents in government institutions and legal matters; to close deals.
-In order to make counterfeiting more difficult, and also to enable signing papers from afar, I've created a system that identifies forgeries of signatures, verifies the authenticity of documents, and establishes a connection between the two sides of the deal.
-
-## How it Works
-The system runs a server, and its users are its clients, with whom it deals simultaniously. It establishes a connection between 2 users (it is the third party). One uploads a document that needs to be signed, and the other gets it. Then, the other user enters his signature. The system runs tests and compares the signature to one in its database. In case it turns out to be forged, meaning the one signing is not the person the signature belongs to, the system warns about it and does not allow the deal to be continued. In case the signature is authentic, it attaches it to the document, adds a watermark, and sends is to the uploader.
+Signing papers is needed in every aspect of our daily lives, though it only takes a couple of seconds. To save the long way a person has to go just to sign a document, there's a need in a digital paper signing softwar. Also, in a world where the demand for protecting one's personal identity arises, making signature counterfeiting harder is important. As a part of my graduation project in the Cyber major, I have created a system that establishes a connection between two clients, enables signing on papers and detects forgery attempts. It stores all files in google drive.
 
 
-### links:
-[structural_similarity](structural_similarity)
+## Technologies
+Please note that this project runs on windows and supports PDF files only.
+ * Python 3.8 (64 bit)
+ * .net framework 4.8 (using c#)
+ * tkinter 8.6.12
+ * Google Drive API v3
+ * pydrive
+ * PuMyPDF 1.19.6
+ * scikit-image 0.19.3
+ * torch 1.11.0
+
+
+## Installation
+To setup this project, install it locally and follow the following steps.
+
+```git clone https://github.com/lihiopp/Signatural.git```
+
+### Install Packcages
+On the **server** machine:
+```
+$ pip install pydrive
+$ pip install PuMyPDF
+$ pip install scikit-image
+$ pip install torch
+```
+On the **client** machine: ```$ pip install pydrive```
+
+### Get Google Drive's API ready
+To start using Google Drive's API that is used in this project, you need to get authantication for Google Services APIs. These guidelines are meant to get authantication to use the google drive account that I have created for ***this project only***. In case you are intrested in using your own drive account or start your own application, [view here](https://d35mpxyw7m7k7g.cloudfront.net/bigdata_1/Get+Authentication+for+Google+Service+API+.pdf).
+  1. Run the **authantication()** function in the GoogleDriveAPI.py library.
+  2. A website was opened in your browser. Click **"continue"** and copy the given code. Paste it in your terminal.
+  3. Once you get the **"Authantication Successful"** output you are good to go.
+
+Please note that this manual authantication is needed every once in a while because of Google's security requirements, otherwise you will get a credentials error. With each running of the code this process is done automaticaly. Also, there is a 100 authantications limit for the same reason.
+
+### Arrange Database
+A users_data.csv file contains the details of the system's signed users. Create one on the server machine before your first running in this format:
+```
+# Python Implementation 
+import pandas as pd
+import numpy as np
+
+data = np.array([['your_name', 'your_password', 'your_email',0,0]])
+df = pd.DataFrame(data,columns=['username', 'password', 'email','attempts','forgeries'])
+df.to_csv("users_data.csv")
+```
+
+
+## Implementation
+### Signet: Signature Forgery Detection
+The system performs offline handwritten signature verification of the static type. That is, it uses 2 signature drawings, it does not monitor them whilst the signer is signing. To perform such thing, this project used image processing methods and the mathematical modules: [Structure Similarity](https://ourcodeworld.com/articles/read/991/how-to-calculate-the-structural-similarity-index-ssim-between-two-images-with-python) and [Mean Squared Error](https://www.freecodecamp.org/news/machine-learning-mean-squared-error-regression-line-c7dde9a26b93/).
+
+![MSE](https://cdn-media-1.freecodecamp.org/images/hmZydSW9YegiMVPWq2JBpOpai3CejzQpGkNG)
+![SSIM](https://miro.medium.com/max/1400/0*N-h0ov6YYCJ_tm4U.png)
+
+
+These provide % of similarity: **low SSIM means forgery, while low MSE means real.** Combining the two, I've set a range in which the result is either "real" or "forged".
+
+
+
+### Email Verification
+Using an SMTP server, we are able to send emails in gmail using python. If you are interested in implementing this in your code, lower the security level of your google account:
+
+```>> Go to your Google Account >> Security >> Turn On "Less secure app access" >> Save```
+
+
+
+## References
 [SigNet](https://medium.com/swlh/signet-detecting-signature-similarity-using-machine-learning-deep-learning-is-this-the-end-of-1a6bdc76b04b)
-[Structural Similarity Index](https://ourcodeworld.com/articles/read/991/how-to-calculate-the-structural-similarity-index-ssim-between-two-images-with-python)
-[C# client](https://www.c-sharpcorner.com/article/socket-programming-in-C-Sharp/)
-[backgroundWorker in c#](https://www.c-sharpcorner.com/uploadfile/mahesh/backgroundworker-in-C-Sharp/)
 
-#### future tasks:
-1. Fix multipule connections to one port problem.
-1. Check client and server and see exceptions of modules... if needed: try to install Python64, torch at home.
-3. Connect GUI to Client
-4. Add thread to client + status variable.
-5. Check MD5 hashing in c#
-6. Add close socket when X is pressed function in client
-7. check drawSig and email verification!!!!
-8. check whether os.mkdir() changes the current working directory.
-9. Check about installer
-10. Check the folders that the code opens and deals with, see if it's working
-11. Store & run server in microsoft cloud ??? (or just use external IP of server?)
+[Structural Similarity Index](https://ourcodeworld.com/articles/read/991/how-to-calculate-the-structural-similarity-index-ssim-between-two-images-with-python)
+
+[C# client](https://www.c-sharpcorner.com/article/socket-programming-in-C-Sharp/)
+
+[backgroundWorker in c#](https://www.c-sharpcorner.com/uploadfile/mahesh/backgroundworker-in-C-Sharp/)

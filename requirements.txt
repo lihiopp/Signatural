@@ -1,0 +1,6 @@
+PyMuPDF
+scikit-image
+torch
+regex
+threading
+pydrive
