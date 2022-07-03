@@ -35,6 +35,8 @@ namespace GUI
             this.btnSignFile = new System.Windows.Forms.Button();
             this.btnSendFileBack = new System.Windows.Forms.Button();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
+            this.boxPageNumber = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lblHelloUser
@@ -106,10 +108,29 @@ namespace GUI
             this.webBrowser1.Size = new System.Drawing.Size(315, 319);
             this.webBrowser1.TabIndex = 56;
             // 
+            // boxPageNumber
+            // 
+            this.boxPageNumber.Location = new System.Drawing.Point(557, 376);
+            this.boxPageNumber.Name = "boxPageNumber";
+            this.boxPageNumber.Size = new System.Drawing.Size(71, 37);
+            this.boxPageNumber.TabIndex = 57;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Century Gothic", 10F);
+            this.label2.Location = new System.Drawing.Point(399, 385);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(152, 23);
+            this.label2.TabIndex = 58;
+            this.label2.Text = "Page Number:";
+            // 
             // SignFilePage
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(244)))), ((int)(((byte)(248)))), ((int)(((byte)(249)))));
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.boxPageNumber);
             this.Controls.Add(this.webBrowser1);
             this.Controls.Add(this.btnSendFileBack);
             this.Controls.Add(this.btnSignFile);
@@ -133,5 +154,7 @@ namespace GUI
         private System.Windows.Forms.Button btnSignFile;
         private System.Windows.Forms.Button btnSendFileBack;
         private System.Windows.Forms.WebBrowser webBrowser1;
+        private System.Windows.Forms.TextBox boxPageNumber;
+        private System.Windows.Forms.Label label2;
     }
 }

@@ -15,7 +15,7 @@ namespace GUI
     {
         private Client client;
         private int verification_code;
-        private string rootpath = @"C:\Users\idd\Desktop\Michals\cyber\Signatural\";
+        private string rootpath = @"C:\Users\student\Desktop\try\Signatural";
         private string username;
 
         public EmailVerificationPage(Client theClient, string verification_code,string username)
@@ -25,6 +25,7 @@ namespace GUI
             client = theClient;
             this.verification_code = Int32.Parse(verification_code);
             this.username = username;
+            Console.WriteLine(this.username);
 
         }
 
@@ -39,10 +40,11 @@ namespace GUI
             }
             else
             {
-                client.Send("Valid");
                 // Get the new user's signature
-                GetSignature();
-                client.SendFile(this.rootpath + username);
+                string path = this.rootpath + @"\GUI\GUI\bin\Debug\";
+                string filename = path + GetSignature();
+                filename = filename.Substring(0, filename.Length - 2);
+                StaticClass.GoogleDrive("upload",filename,filename);                
                 MessageBoxIcon icon = MessageBoxIcon.Information;
                 MessageBox.Show("You've successfully signed up!\r\nLog in with your new Account.", "Success!", MessageBoxButtons.OK, icon);
                 Form1.Instance.PnlContainer.Controls["HomePage"].BringToFront();
@@ -50,11 +52,11 @@ namespace GUI
             }
         }
 
-        private void GetSignature()
+        private string GetSignature()
         {
-            string script = this.rootpath + "enterSignatureWindow.py";
+            string script = this.rootpath + @"\enterSignatureWindow.py";
             var psi = new ProcessStartInfo();
-            psi.FileName = @"C:\Users\idd\AppData\Local\Programs\Python\Python38-32\python.exe";
+            psi.FileName = @"C:\Users\student\AppData\Local\Programs\Python\Python38\python.exe";
             psi.Arguments = string.Format(script + " " + this.username);
             psi.UseShellExecute = false;
             psi.CreateNoWindow = true;
@@ -68,6 +70,7 @@ namespace GUI
                 result = process.StandardOutput.ReadToEnd();
                 process.WaitForExit();
             }
+            return result;
         }
     }
 }

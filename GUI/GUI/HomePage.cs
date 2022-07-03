@@ -22,7 +22,7 @@ namespace GUI
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            client.Send("[Login]");
+            client.Send("Login");
             if(!Form1.Instance.PnlContainer.Controls.ContainsKey("LoginPage"))
             {
                 LoginPage loginPage = new LoginPage(client);
@@ -35,7 +35,7 @@ namespace GUI
 
         private void btnSignup_Click(object sender, EventArgs e)
         {
-            client.Send("[Signup]");
+            client.Send("Signup");
             if (!Form1.Instance.PnlContainer.Controls.ContainsKey("SignupPage"))
             {
                 SignupPage signupPage = new SignupPage(client);

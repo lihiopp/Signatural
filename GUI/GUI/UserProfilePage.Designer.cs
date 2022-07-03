@@ -53,7 +53,7 @@ namespace GUI
             // 
             this.logint2.AutoSize = true;
             this.logint2.Font = new System.Drawing.Font("Century Gothic", 13F);
-            this.logint2.Location = new System.Drawing.Point(185, 202);
+            this.logint2.Location = new System.Drawing.Point(181, 189);
             this.logint2.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.logint2.Name = "logint2";
             this.logint2.Size = new System.Drawing.Size(432, 32);
@@ -91,7 +91,7 @@ namespace GUI
             // pictureBox1
             // 
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(219, 257);
+            this.pictureBox1.Location = new System.Drawing.Point(201, 224);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(320, 245);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;

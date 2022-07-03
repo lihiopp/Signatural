@@ -44,12 +44,12 @@ namespace GUI
             string response = client.Receive();
             if (response == "Valid")
             {
-                //email verification here!!!!
+                //email verification
                 string verificationCode = StaticClass.EmailVerification(email);
 
                 if (!Form1.Instance.PnlContainer.Controls.ContainsKey("EmailVerificationPage"))
                 {
-                    EmailVerificationPage emailVerificationPage = new EmailVerificationPage(client,verificationCode, boxUsernameSignup.Text);
+                    EmailVerificationPage emailVerificationPage = new EmailVerificationPage(client,verificationCode, username);
                     Form1.Instance.PnlContainer.Controls.Add(emailVerificationPage);
                 }
                 Form1.Instance.PnlContainer.Controls["emailVerificationPage"].BringToFront();

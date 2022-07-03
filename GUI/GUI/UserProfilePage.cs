@@ -14,17 +14,16 @@ namespace GUI
     {
         private Client client;
         private string username;
-        private string rootpath = @"C:\Users\idd\Desktop\Michals\cyber\Signatural\";
-        public UserProfilePage(Client theClient,string username,string filename)
+        private string rootpath = @"C:\Users\student\Desktop\try\Signatural\";
+        public UserProfilePage(Client theClient,string username)
         {
             InitializeComponent();
+            btnSignFile.BackColor = Color.DodgerBlue;
             Form1.Instance.BackButton.Visible = false;
             client = theClient;
             this.username = username;
             lblHelloUser.Text += username;
-            pictureBox1.Image = Image.FromFile(System.Environment.GetFolderPath
-                (System.Environment.SpecialFolder.Personal) + "_graph.png");
-            this.Controls.Add(pictureBox1);
+            pictureBox1.Image = Image.FromFile(@"C:\Users\student\Desktop\try\Signatural\GUI\GUI\bin\Debug\activity.png");
         }
 
         private void btnSendFile_Click(object sender, EventArgs e)
@@ -45,16 +44,13 @@ namespace GUI
         {
             // Gets request from other user thorugh the server
             btnSignFile.BackColor = Color.AliceBlue;
-            string msg = client.Receive();
-            MessageBoxIcon icon = MessageBoxIcon.Information;
-            DialogResult result = MessageBox.Show(msg, "Hey there!", MessageBoxButtons.YesNo, icon);
-            if(result == DialogResult.Yes)
+            client.Send("Sign file");
             {
-                client.Send("Yes");
+                
                 // Gets needed file
                 string filename = client.Receive();
-                client.GetFile(filename);
-                
+                // Download and show in next page
+                StaticClass.GoogleDrive("download", filename, this.rootpath);
                 if (!Form1.Instance.PnlContainer.Controls.ContainsKey("SignFilePage"))
                 {
                     SignFilePage signFilePage = new SignFilePage(client,rootpath+filename,this.username);
@@ -62,10 +58,6 @@ namespace GUI
                 }
                 Form1.Instance.PnlContainer.Controls["SignFilePage"].BringToFront();
                 Form1.Instance.PnlContainer.Controls.Remove(Controls["userProfilePage"]);
-            }
-            else
-            {
-                btnSignFile.BackColor = Color.DodgerBlue;
             }
         }
     }

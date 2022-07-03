@@ -1,0 +1,13 @@
+client_config_backend: settings
+client_config:
+  client_id: 740839530875-2t88tkvfckf28j5mcs47ghctdb7ievn1.apps.googleusercontent.com
+  client_secret: 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
+
+save_credentials: True
+save_credentials_backend: file
+save_credentials_file: C:\\Users\\idd\\Desktop\\Michals\\cyber\\Project\\Signatural\\GoogleDriveAPI\\credentials.json
+
+get_refresh_token: True
+
+oauth_scope:
+  - https://www.googleapis.com/auth/drive.file

@@ -7,19 +7,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace GUI
 {
     public partial class SendFilePage : UserControl
     {
         private Client client;
+        private string rootpath = @"C:\Users\student\Desktop\sender\Signatural\GUI\filesReceived\";
         public SendFilePage(Client theClient)
         {
             InitializeComponent();
+            boxUsernameOfSigner.Text = "";
+            filenamebox.Text = "";
             browseFilesPanel.Visible = false;
             btnSendFile.Visible = false;
-            lblSignerUserStatus.Text = "";
-            Form1.Instance.BackButton.Visible = true ;
+            lblSignerUserStatus.Text = "...";
+            Form1.Instance.BackButton.Visible = true;
             client = theClient;
         }
 
@@ -45,27 +49,41 @@ namespace GUI
 
         private void btnSendFile_Click(object sender, EventArgs e)
         {
-            //send file to server
-            client.SendFile(filenamebox.Text);
-            Console.WriteLine($"Sent {filenamebox.Text}!");
+            // Uploads file and sends the filename to the server
+            string filepath = filenamebox.Text;
+            var title = filepath.Split('\\');
+            int num = title.Length - 1;
+            string title2 = title[num];
+            StaticClass.GoogleDrive("upload", filepath, title2);
+            client.Send(title2);
 
             // Gets notified if there was a forgery attempt or not (signature is real / forged)
             string response = client.Receive();
-            if (response == "real")
+            if (response.Split(',')[0] == "real")
             {
-                string filename = client.Receive();
-                client.GetFile(filename);
-
-                Form1.Instance.BackButton.Visible = false;
-                if (!Form1.Instance.PnlContainer.Controls.ContainsKey("SaveSignedFilePage"))
+                if (response.Split(',')[1] == "Failed")
                 {
-                    SaveSignedFilePage saveSignedFilePage = new SaveSignedFilePage(client, filename);
-                    Form1.Instance.PnlContainer.Controls.Add(saveSignedFilePage);
+                    MessageBoxIcon icon = MessageBoxIcon.Error;
+                    MessageBox.Show("Something went wrong. Process Failed.", "Oops...", MessageBoxButtons.OK, icon);
+                    Form1.Instance.PnlContainer.Controls["UserProfilePage"].BringToFront();
+                    StaticClass.currentPage = "UserProfilePage";
+                    Form1.Instance.PnlContainer.Controls.Remove(Controls["SendFilePage"]);
                 }
-                Form1.Instance.PnlContainer.Controls["SaveSignedFilePage"].BringToFront();
-                StaticClass.currentPage = "SaveSignedFilePage";
+                else
+                {
+                    string filename = response.Split(',')[2];
+                    StaticClass.GoogleDrive("download", filename, this.rootpath);
 
-                Form1.Instance.PnlContainer.Controls.Remove(Controls["SendFilePage"]);
+                    Form1.Instance.BackButton.Visible = false;
+                    if (!Form1.Instance.PnlContainer.Controls.ContainsKey("SaveSignedFilePage"))
+                    {
+                        SaveSignedFilePage saveSignedFilePage = new SaveSignedFilePage(client, this.rootpath + filename);
+                        Form1.Instance.PnlContainer.Controls.Add(saveSignedFilePage);
+                    }
+                    Form1.Instance.PnlContainer.Controls["SaveSignedFilePage"].BringToFront();
+                    StaticClass.currentPage = "SaveSignedFilePage";
+                    Form1.Instance.PnlContainer.Controls.Remove(Controls["SendFilePage"]);
+                }
             }
             else
             {
@@ -85,19 +103,15 @@ namespace GUI
                 MessageBoxIcon icon = MessageBoxIcon.Error;
                 MessageBox.Show("You must enter a username in this field.", "Oops...", MessageBoxButtons.OK, icon);
             }
-            else 
+            else
             {
                 client.Send(boxUsernameOfSigner.Text);
                 string response = client.Receive();
                 lblSignerUserStatus.Text = response;
-                if (response == "Request accepted")
+                if (response == "User available")
                 {
-                    lblSignerUserStatus.ForeColor = Color.DarkSeaGreen;
                     browseFilesPanel.Visible = true;
                 }
-                else
-                    lblSignerUserStatus.ForeColor = Color.DeepPink;
-
             }
         }
     }

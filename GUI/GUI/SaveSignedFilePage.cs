@@ -14,12 +14,12 @@ namespace GUI
     public partial class SaveSignedFilePage : UserControl
     {
         private Client client;
-        private string path = "C:\\Users\\idd\\Desktop\\Michals\\cyber\\Signatural\\filesReceived\\";
-        public SaveSignedFilePage(Client theClient,string filename)
+        private string filename;
+        public SaveSignedFilePage(Client theClient, string filename)
         {
             InitializeComponent();
-            this.path = this.path + filename;
-            webBrowser1.Navigate(this.path);
+            this.filename = filename;
+            webBrowser1.Navigate(filename);
             webBrowser1.Invalidate();
             Form1.Instance.BackButton.Visible = false;
             client = theClient;
@@ -41,9 +41,9 @@ namespace GUI
             if (saveDialog.ShowDialog() == DialogResult.OK)
             {
                 string filepath = saveDialog.FileName; // In case the user changed it inside the dialog
-                
+
                 // Copy file to the user's wanted location
-                FileInfo fi1 = new FileInfo(this.path);
+                FileInfo fi1 = new FileInfo(this.filename);
                 FileInfo fi2 = new FileInfo(filepath);
                 fi1.CopyTo(filepath);
 

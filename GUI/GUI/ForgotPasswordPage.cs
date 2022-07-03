@@ -39,7 +39,7 @@ namespace GUI
             else
             {
                 this.email = boxEmailForgotPassword.Text;
-                verification_code = Int32.Parse(StaticClass.EmailVerification(email));
+                this.verification_code = Int32.Parse(StaticClass.EmailVerification(email));
                 lblVerifyCode.Visible = true;
                 boxVerifyCode.Visible = true;
                 btnOkVerifyCode.Visible = true;
@@ -57,7 +57,7 @@ namespace GUI
             }
             else
             {
-                verification_code = Int32.Parse(StaticClass.EmailVerification(this.email));
+                this.verification_code = Int32.Parse(StaticClass.EmailVerification(this.email));
             }
 
         }

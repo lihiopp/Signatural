@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Security.Cryptography;
-
+using System.Threading;
 
 namespace GUI
 {
@@ -27,6 +27,7 @@ namespace GUI
 
         private void linkForgotPassword_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
+            client.Send("Forgot Password");
             if (!Form1.Instance.PnlContainer.Controls.ContainsKey("ForgotPasswordPage"))
             {
                 ForgotPasswordPage forgotPasswordPage = new ForgotPasswordPage(client);
@@ -34,8 +35,6 @@ namespace GUI
             }
             Form1.Instance.PnlContainer.Controls["ForgotPasswordPage"].BringToFront();
             StaticClass.currentPage = "ForgotPasswordPage";
-            client.Send("Forgot Password");
-
         }
         private void btnDoneLogin_Click(object sender, EventArgs e)
         {
@@ -43,14 +42,14 @@ namespace GUI
             if (input_code == verification_code)
             {
                 client.Send("Valid");
-                string response = client.Receive();
-                int attempts = Int32.Parse((response.Substring(1, response.Length - 2)).Split(',')[0]);
-                int forgeries = Int32.Parse((response.Substring(1, response.Length - 2)).Split(',')[1]);
-                string filename = client.Receive();
-                client.GetFile(filename);
+                // Get the user's activity graph's data
+                string data = client.Receive();
+                string attempts = data.Split(',')[0];
+                string forgeries = data.Split(',')[1];
+                StaticClass.CreateActivityGraph(boxUsernameLogin.Text, attempts, forgeries);
                 if (!Form1.Instance.PnlContainer.Controls.ContainsKey("UserProfilePage"))
                 {
-                    UserProfilePage userProfilePage = new UserProfilePage(client, boxUsernameLogin.Text,filename);
+                    UserProfilePage userProfilePage = new UserProfilePage(client, boxUsernameLogin.Text);
                     Form1.Instance.PnlContainer.Controls.Add(userProfilePage);
                 }
                 Form1.Instance.PnlContainer.Controls["UserProfilePage"].BringToFront();
@@ -75,17 +74,17 @@ namespace GUI
             var hashBytes = md5Hash.ComputeHash(sourceBytes); // Generate hash value (in Byte Array) of the input
             var hash = BitConverter.ToString(hashBytes).Replace("-", string.Empty); // Convert hash byte array to string
 
-            client.Send($"[{username},{hash}]");
+            client.Send($"{username},{hash}");
             string response = client.Receive();
-            if (response != "Logged in")
+            if (response.Split(',')[0] != "Logged in")
             {
                 MessageBoxIcon error = MessageBoxIcon.Error;
                 MessageBox.Show(response, "Oops...", MessageBoxButtons.OK, error);
             }
             else
             {
-                string email = client.Receive();
-                verification_code = Int32.Parse(StaticClass.EmailVerification(email));
+                string email = response.Split(',')[1];
+                this.verification_code = Int32.Parse(StaticClass.EmailVerification(email));
                 lblVerifyCode.Visible = true;
                 boxVerifyCode.Visible = true;
                 btnSendVerifyMail.Visible = false;

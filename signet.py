@@ -1,7 +1,7 @@
 from skimage.metrics import structural_similarity
 import numpy as np
 from PIL import Image
-
+import os
 def mse(A, B):
     """
         Computes Mean Squared Error between two images.
@@ -31,6 +31,8 @@ def ssim(A, B):
     return structural_similarity(A.flatten(), B.flatten())
 
 def main(signature1,signature2):
+    if(not(os.path.exists(signature1)) or not(os.path.exists(signature2))):
+       return "Image not found"
     # Open images as numpy arrays.
     real_img = Image.open(signature1)
     realnp = np.asarray(real_img)
@@ -39,9 +41,9 @@ def main(signature1,signature2):
     
     # Make sure the images have the same size.
     testnp.resize(realnp.shape)
-    mse = mse(realnp,testnp)
-    ssim = ssim(realnp,testnp)
-    if(mse < 0.3 and ssim > 0.7)
+    mse_result = mse(realnp,testnp)
+    ssim_result = ssim(realnp,testnp)
+    if(mse_result < 0.3 and ssim_result > 0.7):
         return "real"
-    else
+    else:
         return "forged"
